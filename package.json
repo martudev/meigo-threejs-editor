@@ -1,0 +1,64 @@
+{
+  "name": "template-react-babel-webpack",
+  "version": "1.0.0",
+  "dependencies": {
+    "dat.gui": "0.7.7",
+    "dotenv": "8.2.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "4.0.3",
+    "sass": "1.32.11",
+    "three": "0.128.0",
+    "web-vitals": "1.1.1"
+  },
+  "scripts": {
+    "dev": "webpack serve --config webpack/webpack.dev.js",
+    "build": "webpack --config webpack/webpack.prod.js",
+    "eject": "react-scripts eject",
+    "heroku-postbuild": "webpack --config webpack/webpack.prod.js",
+    "generate-report": "webpack --profile --json=compilation-stats.json",
+    "build-report": "webpack --config webpack/webpack.report.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "7.13.16",
+    "@babel/plugin-proposal-class-properties": "7.13.0",
+    "@babel/plugin-transform-runtime": "7.13.15",
+    "@babel/preset-env": "7.13.15",
+    "@babel/preset-react": "7.13.13",
+    "@svgr/webpack": "5.5.0",
+    "babel-loader": "8.2.2",
+    "clean-webpack-plugin": "3.0.0",
+    "compression-webpack-plugin": "7.1.2",
+    "copy-webpack-plugin": "8.1.1",
+    "cross-env": "7.0.3",
+    "css-loader": "5.2.4",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "5.3.1",
+    "sass-loader": "11.0.1",
+    "style-loader": "2.0.0",
+    "webpack": "5.36.0",
+    "webpack-bundle-analyzer": "4.4.1",
+    "webpack-cli": "4.6.0",
+    "webpack-dev-server": "3.11.2",
+    "webpack-merge": "5.7.3"
+  }
+}

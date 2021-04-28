@@ -1,0 +1,82 @@
+canvas
+    cursor: grab
+
+.grabbing
+    cursor: grabbing
+
+button
+    position: absolute
+    top: calc(100vh - 45px - 58px)
+    left: calc(50% - 250px / 2)
+    height: 58px
+    background: #fff
+    border-radius: 29px
+    box-shadow: 0px 30px 70px rgb(60 0 189 / 13%)
+    border: 0
+    display: inline-flex
+    align-items: center
+    user-select: none
+    pointer-events: none
+    line-height: 1em
+    padding: 0 1rem 0 0
+    color: #000
+
+button .label
+    display: block
+    position: relative
+    text-align: center
+    line-height: 1em
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif
+    font-weight: 500
+    font-size: 16px
+    margin-left: 15px
+    margin-right: 15px
+    opacity: 0.75
+
+button .icon
+    position: relative
+    display: block
+    width: 20px
+    height: 30px
+    border: 2px solid #705df2
+    border-radius: 11px
+    margin-left: 24px
+    opacity: 0.75
+
+button .icon .left
+    position: absolute
+    top: 2px
+    left: 2px
+    width: calc(100% / 2 - 2px)
+    height: 9px
+    background: #705df2
+    border-top-left-radius: 6px
+
+button .icon .right
+    position: absolute
+    top: 2px
+    right: 2px
+    width: calc(100% / 2 - 2px)
+    height: 9px
+    background: #705df2
+    border-top-right-radius: 6px
+
+button .icon .middle
+    position: absolute
+    top: 2px
+    right: 6px
+    width: calc(100% / 2.5 - 2px)
+    height: 9px
+    background: #705df2
+    border-radius: 6px
+
+.is-not-interacting
+    transform: scale(0.0001, 0.0001)
+    transition-duration: 0.5s
+    transition-delay: 0.1s
+
+.is-interacting
+    transform: scale(1, 1)
+    transition-duration: 0.5s
+    transition-delay: 0.95s
+    transition-timing-function: cubic-bezier(0.59, 1.97, 0.55, 0.83)
