@@ -3,13 +3,10 @@ import * as dat from 'dat.gui'
 
 export class GUI {
 
-    constructor() {
-        const gui = new dat.GUI()
-        this.createUI();
-    }
+    controls;
 
-    createUI() {
-        
+    constructor() {
+        this.controls = new dat.GUI();
     }
 
 }
