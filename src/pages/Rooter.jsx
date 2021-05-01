@@ -3,14 +3,14 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import Index from "./Index";
+import Editor from "./Editor";
 
 export default function Rooter() {
     return (
         <Router>
             <Switch>
             <Route path="*">
-                <Index></Index>
+                <Editor />
             </Route>
             </Switch>
         </Router>

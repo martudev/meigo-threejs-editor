@@ -1,60 +1,24 @@
-import { useEffect } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import '../styles/index.sass'
-import { GUI } from '../meigo/threejs/GUI'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import Tweakpane from 'tweakpane'
 import { saveAs } from 'file-saver';
+import GUI from 'src/components/GUI';
 
-export default function Index() {
+export default function Editor() {
 
-    useEffect(() => {
+    const [scene, setScene] = useState(null)
+
+    useLayoutEffect(() => {
         const SCENE_BACKGROUND_COLOR = "#4d4d4d"
         const AMBIENT_LIGHT_COLOR = "#4d4d4d"
         const DIRECTIONAL_LIGHT_COLOR = "#4d4d4d"
         const POINT_LIGHT_COLOR = "#4d4d4d"
 
-        const pane = new Tweakpane({
-            container: document.getElementById('controls')
-        });
-
-        const editor = pane.addFolder({
-            title: 'Meigo Editor - Tweakpane'
-        })
-        
         // Scene
         let scene = new THREE.Scene();
         scene.background = new THREE.Color(SCENE_BACKGROUND_COLOR);
-
-        const sceneFolder = editor.addFolder({
-            title: 'Scene'
-        })
-
-        const paramsSceneInput = {
-            background: '#' + scene.background.getHexString()
-        }
-        let input = sceneFolder.addInput(paramsSceneInput, 'background')
-        input.on('change', (ev) => {
-            scene.background = new THREE.Color(ev.value);
-
-
-            var fileS = document.getElementById('file-selector')
-
-            fileS.addEventListener('change', (ev) => {
-                const fileList = ev.target.files;
-                var reader = new FileReader()
-                reader.onload = (event) => {
-                    var json = JSON.parse(event.target.result)
-                    scene = new THREE.ObjectLoader().parse( json )
-                    console.log(scene)
-                    scene.updateMatrixWorld()
-                }
-                reader.readAsText(fileList[0], 'aplication/json;charset=utf-8')
-            })
-
-            fileS.click()
-        })
 
 
         // Camera
@@ -91,7 +55,7 @@ export default function Index() {
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const canvas = document.getElementsByTagName('canvas')[0];
+        const canvas = document.querySelector('canvas[class="webgl"]')
         canvas.addEventListener('pointerdown', () => {
             canvas.classList.add('grabbing')
         });
@@ -130,22 +94,6 @@ export default function Index() {
                 }
             });
 
-            /*var file = new File([JSON.stringify(scene)], "test.json", {type: "aplication/json;charset=utf-8"});
-            saveAs(file)*/
-
-            console.log(scene.background)
-            let data = JSON.stringify(scene.background)
-            console.log(data)
-            let json = JSON.parse(data)
-            console.log(json)
-            console.log(new THREE.Color(json))
-
-            json = scene.toJSON()
-            scene = new THREE.ObjectLoader().parse(json)
-
-            console.log(scene)
-            scene.updateWorldMatrix(true, true)
-
 
             startPerformanceRender();
             animate();
@@ -163,7 +111,7 @@ export default function Index() {
 
         var frameCount = 0;
         var fps, fpsInterval, startTime, now, then, elapsed;
-
+        //https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
         function startPerformanceRender() {
             fpsInterval = 1000 / 60;
             then = Date.now();
@@ -187,13 +135,14 @@ export default function Index() {
             }
         }
 
-        //https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
+        setScene(scene)
+
     }, [])
 
     return(
         <>
             <input type="file" id="file-selector" accept=".json" style={{ display: 'none' }}></input>
-            <div id="controls"></div>
+            {scene && <GUI scene={scene} />}
             <canvas className="webgl"></canvas>
         </>
     );
