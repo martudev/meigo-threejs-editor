@@ -5,10 +5,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { saveAs } from 'file-saver';
 import GUI from 'src/components/GUI';
+import { setLimitFps } from 'src/hooks/LimitFps';
+import { useLimitFps } from 'src/hooks/LimitFps';
 
 export default function Editor() {
 
     const [scene, setScene] = useState(null)
+    const [camera, setCamera] = useState(null)
+    const [controls, setControls] = useState(null)
 
     useLayoutEffect(() => {
         const SCENE_BACKGROUND_COLOR = "#4d4d4d"
@@ -31,6 +35,8 @@ export default function Editor() {
         camera.position.x = 0;
         camera.position.y = 5;
         camera.position.z = 10;
+
+        setCamera(camera)
 
 
         let hlight = new THREE.AmbientLight("#4d4d4d",8);
@@ -66,6 +72,7 @@ export default function Editor() {
 
         const controls = new OrbitControls( camera, renderer.domElement );
         controls.enableDamping = true;
+        setControls(controls)
 
         // Creating ground grid
         const gridHelper = new THREE.GridHelper(10, 10);
@@ -95,44 +102,18 @@ export default function Editor() {
             });
 
 
-            startPerformanceRender();
-            animate();
+            const fpsObject = setLimitFps(60);
+            animate(fpsObject);
         });
 
-        function animate() {
+        const animate = (fpsObject) => {
             
-            requestAnimationFrame( animate );
+            requestAnimationFrame(() => animate(fpsObject) );
 
-            checkPerformanceRender(() => {
+            useLimitFps(() => {
                 controls.update();
                 renderer.render( scene, camera );
-            });
-        }
-
-        var frameCount = 0;
-        var fps, fpsInterval, startTime, now, then, elapsed;
-        //https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
-        function startPerformanceRender() {
-            fpsInterval = 1000 / 60;
-            then = Date.now();
-            startTime = then;
-        }
-
-        function checkPerformanceRender(callback) {
-            now = Date.now();
-            elapsed = now - then;
-
-            // if enough time has elapsed, draw the next frame
-
-            if (elapsed > fpsInterval) {
-
-                // Get ready for next frame by setting then=now, but also adjust for your
-                // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
-                then = now - (elapsed % fpsInterval);
-
-                // Put your drawing code here
-                callback();
-            }
+            }, fpsObject)
         }
 
         setScene(scene)
@@ -142,7 +123,7 @@ export default function Editor() {
     return(
         <>
             <input type="file" id="file-selector" accept=".json" style={{ display: 'none' }}></input>
-            {scene && <GUI scene={scene} />}
+            {scene && <GUI scene={scene} camera={camera} controls={controls} />}
             <canvas className="webgl"></canvas>
         </>
     );
