@@ -1,29 +1,47 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import '../styles/index.sass'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { saveAs } from 'file-saver';
-import GUI from 'src/components/GUI';
+import GUI from 'src/components/GUI/GUI';
 import { setLimitFps } from 'src/hooks/LimitFps';
 import { useLimitFps } from 'src/hooks/LimitFps';
+import { setGlobalScene } from 'src/redux/actions';
+import { useDispatch, useSelector } from 'react-redux'
 
 export default function Editor() {
 
-    const [scene, setScene] = useState(null)
-    const [camera, setCamera] = useState(null)
-    const [controls, setControls] = useState(null)
+    const dispatch = useDispatch()
+
+    const globalScene = useSelector(store => store.scene)
 
     useLayoutEffect(() => {
-        const SCENE_BACKGROUND_COLOR = "#4d4d4d"
-        const AMBIENT_LIGHT_COLOR = "#4d4d4d"
-        const DIRECTIONAL_LIGHT_COLOR = "#4d4d4d"
-        const POINT_LIGHT_COLOR = "#4d4d4d"
 
         // Scene
         let scene = new THREE.Scene();
-        scene.background = new THREE.Color(SCENE_BACKGROUND_COLOR);
+        scene.background = new THREE.Color("#4d4d4d");
 
+        dispatch(setGlobalScene(scene))
+
+    }, [])
+
+    return(
+        <>
+            {globalScene && <RenderWebGL />}
+        </>
+    );
+}
+
+
+function RenderWebGL() {
+
+    const scene = useSelector(store => store.scene)
+
+    const [camera, setCamera] = useState(null)
+    const [controls, setControls] = useState(null)
+    const [renderer, setRenderer] = useState(null)
+
+    useEffect(() => {
 
         // Camera
         let camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight,0.01,1000);
@@ -60,6 +78,7 @@ export default function Editor() {
             canvas: document.querySelector('canvas[class="webgl"]')
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        setRenderer(renderer)
 
         const canvas = document.querySelector('canvas[class="webgl"]')
         canvas.addEventListener('pointerdown', () => {
@@ -78,7 +97,6 @@ export default function Editor() {
         const gridHelper = new THREE.GridHelper(10, 10);
         scene.add(gridHelper);
 
-
         let loader = new GLTFLoader();
 
         loader.load('public/models3d/lamp/scene.gltf', function (glb) {
@@ -89,7 +107,7 @@ export default function Editor() {
             cube.scale.set(0.03,0.03,0.03);
             scene.add(glb.scene);
 
-            let box = glb.scene;
+            /*let box = glb.scene;
 
             box.traverse((child) => {
                 if (child.isMesh) {
@@ -99,13 +117,12 @@ export default function Editor() {
                     child.material.wireframe = true
                     child.material.color = new THREE.Color(0x9aff)
                 }
-            });
+            });*/
 
-
-            const fpsObject = setLimitFps(60);
-            animate(fpsObject);
         });
 
+
+        const fpsObject = setLimitFps(60);
         const animate = (fpsObject) => {
             
             requestAnimationFrame(() => animate(fpsObject) );
@@ -115,15 +132,12 @@ export default function Editor() {
                 renderer.render( scene, camera );
             }, fpsObject)
         }
-
-        setScene(scene)
-
+        animate(fpsObject);
     }, [])
 
     return(
         <>
-            <input type="file" id="file-selector" accept=".json" style={{ display: 'none' }}></input>
-            {scene && <GUI scene={scene} camera={camera} controls={controls} />}
+            {camera && controls && <GUI camera={camera} controls={controls} />}
             <canvas className="webgl"></canvas>
         </>
     );

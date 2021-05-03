@@ -2,10 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Rooter from './pages/Rooter';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux'
+import store from './redux/store'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Rooter />
+    <Provider store={store}>
+      <Rooter />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,5 +1,5 @@
-import Pane from '../tweakpane-react/Pane';
-import Folder from '../tweakpane-react/Folder';
+import Pane from '../../tweakpane-react/Pane';
+import Folder from '../../tweakpane-react/Folder';
 import { Color, Button } from 'src/tweakpane-react/Input';
 import * as THREE from 'three'
 import { Separator } from 'src/tweakpane-react/Separator';
@@ -7,9 +7,17 @@ import { useLayoutEffect, useState, useEffect } from 'react';
 import { Point3D } from 'src/tweakpane-react/Input';
 import { useLimitFps } from 'src/hooks/LimitFps';
 import { setLimitFps } from 'src/hooks/LimitFps';
+import { saveAs } from 'file-saver';
+import { String } from 'src/tweakpane-react/Input';
+import { SceneControls } from './SceneControls';
+import { setGlobalScene } from 'src/redux/actions';
+import { useDispatch, useSelector } from 'react-redux'
 
 
-export default function GUI({ scene, camera, controls }) {
+
+export default function GUI({ camera, controls }) {
+
+    const dispatch = useDispatch()
 
     const [container, setContainer] = useState(null)
     const [popUpWindow, setPopUpWindow] = useState(null)
@@ -24,14 +32,48 @@ export default function GUI({ scene, camera, controls }) {
         z:camera.rotation.z * 180 / Math.PI
     })
 
+    const scene = useSelector(store => store.scene)
+
+    const getCurrentDateTimeFormatted = () => {
+        return new Date().toISOString()
+    }
+
+    const [fileNameSaveSection, setFileNameSaveSection] = useState(getCurrentDateTimeFormatted())
+    const [titleSaveSection, setTitleSaveSection] = useState('Save scene')
+    
+
+    const onLoadScene = (event) => {
+        var json = JSON.parse(event.target.result)
+        new THREE.ObjectLoader().parse(json, (obj) => {
+            dispatch(setGlobalScene(obj))
+        })
+    }
+
+
     useLayoutEffect(() => {
         const controls = document.getElementById('controls')
         setContainer(controls)
+
+
+        const onChange = (ev) => {
+            const fileList = ev.target.files;
+            var reader = new FileReader()
+            reader.onload = onLoadScene
+            reader.readAsText(fileList[0], 'aplication/json;charset=utf-8')
+        }
+
+        const fileSelector = document.getElementById('file-selector')
+
+        fileSelector.addEventListener('change', onChange)
+
+        return () => {
+            fileSelector.removeEventListener('change', onChange)
+        }
     }, [])
 
     const refreshCameraValues = () => {
 
-        const fpsObject = setLimitFps(30)
+        const fpsObject = setLimitFps(1)
 
         const change = (ev) => {
             useLimitFps(() => {
@@ -84,10 +126,25 @@ export default function GUI({ scene, camera, controls }) {
 
     const handleLoadScene = (ev) => {
         console.log('load scene..')
+        document.getElementById('file-selector').click()
     }
 
     const handleSaveScene = (ev) => {
-        console.log('save scene..')
+        setTitleSaveSection('Saving...')
+        scene.updateMatrixWorld(); // es importante para el tamaño de los componentes
+        const result = scene.toJSON();
+        const output = JSON.stringify(result);
+        var file = new File([output], `${fileNameSaveSection}.json`, {type: "aplication/json;charset=utf-8"});
+        saveAs(file)
+        setTitleSaveSection('Save scene')
+    }
+
+    const handleExportScene = (ev) => {
+        scene.updateMatrixWorld(); // es importante para el tamaño de los componentes
+        const result = scene.toJSON();
+        const output = JSON.stringify(result);
+        var file = new File([output], `${fileNameSaveSection}.json`, {type: "aplication/json;charset=utf-8"});
+        //saveAs(file)
     }
 
     const handleLoad3DModel = (ev) => {
@@ -112,24 +169,35 @@ export default function GUI({ scene, camera, controls }) {
         setPopUpWindow(null)
     }
 
+    const handleOnChangeFileName = (ev) => {
+        setFileNameSaveSection(ev.value)
+    }
+
     return(
         <>
             <div id="controls"></div>
+            <input type="file" id="file-selector" accept=".json" style={{ display: 'none' }}></input>
             <Pane title='Meigo Editor - Tweakpane' expanded={true} container={container}>
-                {!popUpWindow && <Button title='Open in new window' onClick={handleOpenConfInNewWindow} />}
-                {popUpWindow && <Button title='Close this window' onClick={handleCloseConfWindow} />}
-                <Button title='Load scene' onClick={handleLoadScene} />
-                <Button title='Save scene' onClick={handleSaveScene} />
-                <Separator />
-                <Button title='Load 3d Model' onClick={handleLoad3DModel} />
+                <Folder title='-- Actions --' expanded={true}>
+                    {!popUpWindow && <Button title='Open in new window' onClick={handleOpenConfInNewWindow} />}
+                    {popUpWindow && <Button title='Close this window' onClick={handleCloseConfWindow} />}
+                    <Button title='Load scene' onClick={handleLoadScene} />
+                    <Separator />
+                    <String name='File name' value={getCurrentDateTimeFormatted()} onChange={handleOnChangeFileName}></String>
+                    <Button title={titleSaveSection} onClick={handleSaveScene} />
+                    <Button title='Export scene' onClick={handleExportScene} />
+                    <Separator />
+                    <Button title='Load 3d Model' onClick={handleLoad3DModel} />
+                </Folder>
                 <Folder title='Scene' expanded={true}>
                     <Color color={scene.background} name='background' onChange={handleSceneBackground} />
                 </Folder>
-                <Folder title='Camera' expanded={true}>
+                <Folder title='Orbit Camera' expanded={true}>
                     <Point3D position={cameraPosition} name='position' onChange={handleCameraPosition}></Point3D>
                     <Point3D position={cameraRotation} name='rotation' onChange={handleCameraRotation}></Point3D>
                 </Folder>
             </Pane>
+            <SceneControls></SceneControls>
         </>
     );
 }

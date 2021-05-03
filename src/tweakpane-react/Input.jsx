@@ -15,11 +15,12 @@ export function Color({ color = 'fff', name = 'color', input = 'color', picker =
 
     const [currentInput, setCurrentInput] = useState(null)
 
+    const defaultData = {}
+    defaultData[name] = getHexStringFormatted(color.getHexString())
+    const [data] = useState(defaultData)
+
     useEffect(() => {
         if(current == null) return
-
-        const data = {}
-        data[name] = getHexStringFormatted(color.getHexString())
 
         const Input = current.addInput(data, name, {
             input: input,
@@ -28,6 +29,14 @@ export function Color({ color = 'fff', name = 'color', input = 'color', picker =
 
         setCurrentInput(Input)
     }, [current])
+
+    useEffect(() => {
+        if(currentInput == null) return
+
+        data[name] = getHexStringFormatted(color.getHexString())
+
+        currentInput.refresh()
+    }, [color])
 
     useOnListener('change', onChange, currentInput)
 
@@ -56,6 +65,12 @@ export function Button({ title = 'Undefined', label = undefined, onClick = defau
         setCurrentInput(Input)
     }, [current])
 
+    useEffect(() => {
+        if (currentInput == null) return
+
+        currentInput.title = title
+    }, [title])
+
     useOnListener('click', onClick, currentInput)
 
     return(
@@ -63,6 +78,35 @@ export function Button({ title = 'Undefined', label = undefined, onClick = defau
         </>
     );
 }
+
+
+
+export function String({ name = 'Undefined', value = '', onChange = defaultFunction }) {
+    
+    const current = useContext(PaneContext).current
+
+    const [currentInput, setCurrentInput] = useState(null)
+
+    useEffect(() => {
+        if(current == null) return
+
+        const data = {}
+        data[name] = value
+
+        const Input = current.addInput(data, name)
+
+        setCurrentInput(Input)
+    }, [current])
+
+    useOnListener('change', onChange, currentInput)
+    
+    return(
+        <>
+        </>
+    );
+}
+
+
 
 
 
