@@ -6,8 +6,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import GUI from 'src/components/GUI/GUI';
 import { setLimitFps } from 'src/hooks/LimitFps';
 import { useLimitFps } from 'src/hooks/LimitFps';
-import { setGlobalScene } from 'src/redux/actions';
+import { setGlobalScene, setGlobalRenderer, setGlobalCamera, setGlobalControls } from 'src/redux/actions';
 import { useDispatch, useSelector } from 'react-redux'
+import { CompressedPixelFormat } from 'three';
 
 export default function Editor() {
 
@@ -21,28 +22,6 @@ export default function Editor() {
         let scene = new THREE.Scene();
         scene.background = new THREE.Color("#4d4d4d");
 
-        dispatch(setGlobalScene(scene))
-
-    }, [])
-
-    return(
-        <>
-            {globalScene && <RenderWebGL />}
-        </>
-    );
-}
-
-
-function RenderWebGL() {
-
-    const scene = useSelector(store => store.scene)
-
-    const [camera, setCamera] = useState(null)
-    const [controls, setControls] = useState(null)
-    const [renderer, setRenderer] = useState(null)
-
-    useEffect(() => {
-
         // Camera
         let camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight,0.01,1000);
 
@@ -54,7 +33,20 @@ function RenderWebGL() {
         camera.position.y = 5;
         camera.position.z = 10;
 
-        setCamera(camera)
+        let renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            canvas: document.querySelector('canvas[class="webgl"]')
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+        const controls = new OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true;
+
+
+
+
+
 
 
         let hlight = new THREE.AmbientLight("#4d4d4d",8);
@@ -73,13 +65,6 @@ function RenderWebGL() {
         let pointLightHelper = new THREE.PointLightHelper(pointLight, 1)
         scene.add(pointLightHelper)
 
-        let renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            canvas: document.querySelector('canvas[class="webgl"]')
-        });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        setRenderer(renderer)
-
         const canvas = document.querySelector('canvas[class="webgl"]')
         canvas.addEventListener('pointerdown', () => {
             canvas.classList.add('grabbing')
@@ -87,11 +72,6 @@ function RenderWebGL() {
         canvas.addEventListener('pointerup', () => {
             canvas.classList.remove('grabbing')
         });
-
-
-        const controls = new OrbitControls( camera, renderer.domElement );
-        controls.enableDamping = true;
-        setControls(controls)
 
         // Creating ground grid
         const gridHelper = new THREE.GridHelper(10, 10);
@@ -105,7 +85,7 @@ function RenderWebGL() {
             cube.position.y = 3;
             cube.position.z = 0;
             cube.scale.set(0.03,0.03,0.03);
-            scene.add(glb.scene);
+            //scene.add(glb.scene);
 
             /*let box = glb.scene;
 
@@ -122,10 +102,41 @@ function RenderWebGL() {
         });
 
 
+
+
+
+
+
+        dispatch(setGlobalCamera(camera))
+        dispatch(setGlobalControls(controls))
+        dispatch(setGlobalRenderer(renderer))
+        dispatch(setGlobalScene(scene))
+
+    }, [])
+
+    return(
+        <>
+            <canvas className="webgl"></canvas>
+            {globalScene && <RenderWebGL />}
+        </>
+    );
+}
+
+
+function RenderWebGL() {
+
+    const scene = useSelector(store => store.scene)
+    const camera = useSelector(store => store.camera)
+    const controls = useSelector(store => store.controls)
+    const renderer = useSelector(store => store.renderer)
+
+    useEffect(() => {
+        
         const fpsObject = setLimitFps(60);
+        let id = null
         const animate = (fpsObject) => {
             
-            requestAnimationFrame(() => animate(fpsObject) );
+            id = requestAnimationFrame(() => animate(fpsObject) );
 
             useLimitFps(() => {
                 controls.update();
@@ -133,12 +144,16 @@ function RenderWebGL() {
             }, fpsObject)
         }
         animate(fpsObject);
-    }, [])
+
+        return () => {
+            cancelAnimationFrame(id)
+        }
+
+    }, [scene])
 
     return(
         <>
-            {camera && controls && <GUI camera={camera} controls={controls} />}
-            <canvas className="webgl"></canvas>
+            <GUI />
         </>
     );
 }
