@@ -8,19 +8,40 @@ import { setLimitFps } from 'src/hooks/LimitFps';
 import { useLimitFps } from 'src/hooks/LimitFps';
 import { setGlobalScene, setGlobalRenderer, setGlobalCamera, setGlobalControls } from 'src/redux/actions';
 import { useDispatch, useSelector } from 'react-redux'
-import { CompressedPixelFormat } from 'three';
+import AutoSaver from 'src/components/AutoSaver';
+import Project from '../models/Project';
 
 export default function Editor() {
 
     const dispatch = useDispatch()
 
     const globalScene = useSelector(store => store.scene)
+    const [isReady, setIsReady] = useState(false)
 
     useLayoutEffect(() => {
 
         // Scene
-        let scene = new THREE.Scene();
+        const scene = new THREE.Scene();
         scene.background = new THREE.Color("#4d4d4d");
+
+        dispatch(setGlobalScene(scene))
+
+    }, [])
+
+    useEffect(() => {
+        if(globalScene == null) return
+
+        const json = Project.getSceneFromLocalStorage()
+
+        if (json != null) {
+            const scene = new THREE.ObjectLoader().parse(json)
+
+            if (scene.uuid != globalScene.uuid) {
+                dispatch(setGlobalScene(scene))
+            }
+        }
+
+
 
         // Camera
         let camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight,0.01,1000);
@@ -50,20 +71,20 @@ export default function Editor() {
 
 
         let hlight = new THREE.AmbientLight("#4d4d4d",8);
-        scene.add(hlight);
+        globalScene.add(hlight);
 
         let directionalLight = new THREE.DirectionalLight("#fff", 4);
         directionalLight.position.set(5,10,7.5);
         directionalLight.castShadow = true;
-        scene.add(directionalLight);
+        globalScene.add(directionalLight);
 
         let pointLight = new THREE.PointLight("#e0d89e", 8);
         pointLight.position.set(0, 2.3, 0);
         pointLight.castShadow = true;
-        scene.add(pointLight);
+        globalScene.add(pointLight);
 
         let pointLightHelper = new THREE.PointLightHelper(pointLight, 1)
-        scene.add(pointLightHelper)
+        globalScene.add(pointLightHelper)
 
         const canvas = document.querySelector('canvas[class="webgl"]')
         canvas.addEventListener('pointerdown', () => {
@@ -75,7 +96,7 @@ export default function Editor() {
 
         // Creating ground grid
         const gridHelper = new THREE.GridHelper(10, 10);
-        scene.add(gridHelper);
+        globalScene.add(gridHelper);
 
         let loader = new GLTFLoader();
 
@@ -106,18 +127,17 @@ export default function Editor() {
 
 
 
-
         dispatch(setGlobalCamera(camera))
         dispatch(setGlobalControls(controls))
         dispatch(setGlobalRenderer(renderer))
-        dispatch(setGlobalScene(scene))
+        setIsReady(true)
 
-    }, [])
+    }, [globalScene])
 
     return(
         <>
             <canvas className="webgl"></canvas>
-            {globalScene && <RenderWebGL />}
+            {isReady && <RenderWebGL />}
         </>
     );
 }
@@ -131,7 +151,7 @@ function RenderWebGL() {
     const renderer = useSelector(store => store.renderer)
 
     useEffect(() => {
-        
+
         const fpsObject = setLimitFps(60);
         let id = null
         const animate = (fpsObject) => {
@@ -153,6 +173,7 @@ function RenderWebGL() {
 
     return(
         <>
+            <AutoSaver />
             <GUI />
         </>
     );

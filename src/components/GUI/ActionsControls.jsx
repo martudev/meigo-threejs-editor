@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { Separator } from 'src/tweakpane-react/Separator';
 import { useState, useLayoutEffect } from 'react';
 import { setGlobalScene } from 'src/redux/actions';
-import { saveAs } from 'file-saver';
+import ProjectSaver from 'src/models/Project';
 
 
 const getCurrentDateTimeFormatted = () => {
@@ -15,8 +15,8 @@ const getCurrentDateTimeFormatted = () => {
 export function ActionsControls() {
 
     const dispatch = useDispatch()
-    const scene = useSelector(store => store.scene)
 
+    const scene = useSelector(store => store.scene);
     const [fileNameSaveSection, setFileNameSaveSection] = useState(getCurrentDateTimeFormatted())
     const [titleSaveSection, setTitleSaveSection] = useState('Save scene')
 
@@ -51,24 +51,16 @@ export function ActionsControls() {
 
     const handleSaveScene = (ev) => {
         setTitleSaveSection('Saving...')
-        scene.updateMatrixWorld(); // es importante para el tamaño de los componentes
-        const result = scene.toJSON();
-        const output = JSON.stringify(result);
-        var file = new File([output], `${fileNameSaveSection}.json`, {type: "aplication/json;charset=utf-8"});
-        saveAs(file)
+        ProjectSaver.saveSceneAsFile(scene, fileNameSaveSection)
         setTitleSaveSection('Save scene')
     }
 
     const handleExportScene = (ev) => {
-        scene.updateMatrixWorld(); // es importante para el tamaño de los componentes
-        const result = scene.toJSON();
-        const output = JSON.stringify(result);
-        var file = new File([output], `${fileNameSaveSection}.json`, {type: "aplication/json;charset=utf-8"});
-        //saveAs(file)
+        // TODO: make an export here
     }
 
     const handleLoad3DModel = (ev) => {
-        console.log('load 3d..')
+        // TODO: make an load 3d here
     }
 
     const handleOnChangeFileName = (ev) => {
