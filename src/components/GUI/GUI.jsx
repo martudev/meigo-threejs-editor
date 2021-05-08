@@ -103,8 +103,8 @@ export default function GUI() {
             <div id="controls"></div>
             <Pane title='Meigo Editor - Tweakpane' expanded={true} container={container}>
                 <Folder title='-- Actions --' expanded={true}>
-                    {!popUpWindow && <Button title='Open in new window' onClick={handleOpenConfInNewWindow} />}
-                    {popUpWindow && <Button title='Close this window' onClick={handleCloseConfWindow} />}
+                    {!popUpWindow && <Button title='Open TAB in new window' onClick={handleOpenConfInNewWindow} />}
+                    {popUpWindow && <Button title='Close TAB' onClick={handleCloseConfWindow} />}
                     <ActionsControls />
                 </Folder>
                 <SceneControls />

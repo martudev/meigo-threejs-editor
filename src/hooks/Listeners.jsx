@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 
 export function useEventListener(eventName, handler, element = window) {
@@ -8,11 +8,11 @@ export function useEventListener(eventName, handler, element = window) {
     // This allows our effect below to always get latest handler ...
     // ... without us needing to pass it in effect deps array ...
     // ... and potentially cause effect to re-run every render.
-    useEffect(() => {
+    useLayoutEffect(() => {
       savedHandler.current = handler;
     }, [handler]);
     
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Make sure element supports addEventListener
         // On
         const isSupported = element && element.addEventListener;
@@ -39,11 +39,11 @@ export function useOnListener(eventName, handler, element = window) {
     // This allows our effect below to always get latest handler ...
     // ... without us needing to pass it in effect deps array ...
     // ... and potentially cause effect to re-run every render.
-    useEffect(() => {
+    useLayoutEffect(() => {
       savedHandler.current = handler;
     }, [handler]);
     
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Make sure element supports addEventListener
         // On
         const isSupported = element && element.on;

@@ -12,7 +12,7 @@ export default function AutoSaver() {
             if(document.hasFocus()) {
                 //Proyect.saveSceneAsLocalStorage(scene)
             }
-        }, 10000)
+        }, 15000)
 
         return () => {
             clearInterval(id)

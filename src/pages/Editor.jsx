@@ -21,26 +21,18 @@ export default function Editor() {
     useLayoutEffect(() => {
 
         // Scene
-        const scene = new THREE.Scene();
+        let scene = new THREE.Scene();
         scene.background = new THREE.Color("#4d4d4d");
-
-        dispatch(setGlobalScene(scene))
-
-    }, [])
-
-    useEffect(() => {
-        if(globalScene == null) return
 
         const json = Project.getSceneFromLocalStorage()
 
         if (json != null) {
-            const scene = new THREE.ObjectLoader().parse(json)
+            const sceneParsed = new THREE.ObjectLoader().parse(json)
 
-            if (scene.uuid != globalScene.uuid) {
-                dispatch(setGlobalScene(scene))
+            if (sceneParsed.uuid != scene.uuid) {
+                scene = sceneParsed
             }
         }
-
 
 
         // Camera
@@ -65,48 +57,69 @@ export default function Editor() {
         controls.enableDamping = true;
 
 
+        const canvas = document.querySelector('canvas[class="webgl"]')
+        const addGrabbingCssClass = () => {
+            canvas.classList.add('grabbing')
+        }
+        const removeGrabbingCssClass = () => {
+            canvas.classList.remove('grabbing')
+        }
+
+        canvas.addEventListener('pointerdown', addGrabbingCssClass);
+        canvas.addEventListener('pointerup', removeGrabbingCssClass);
+
+        
+        
+        dispatch(setGlobalCamera(camera))
+        dispatch(setGlobalControls(controls))
+        dispatch(setGlobalRenderer(renderer))
+        dispatch(setGlobalScene(scene))
+
+
+        return ()  => {
+            canvas.removeEventListener('pointerdown', addGrabbingCssClass)
+            canvas.removeEventListener('pointerup', removeGrabbingCssClass)
+        }
+
+    }, [])
+
+
+    useEffect(() => {
+        if(globalScene == null) return
 
 
 
 
 
         let hlight = new THREE.AmbientLight("#4d4d4d",8);
-        globalScene.add(hlight);
+        //globalScene.add(hlight);
 
         let directionalLight = new THREE.DirectionalLight("#fff", 4);
         directionalLight.position.set(5,10,7.5);
         directionalLight.castShadow = true;
-        globalScene.add(directionalLight);
+        //globalScene.add(directionalLight);
 
         let pointLight = new THREE.PointLight("#e0d89e", 8);
         pointLight.position.set(0, 2.3, 0);
         pointLight.castShadow = true;
-        globalScene.add(pointLight);
+        //globalScene.add(pointLight);
 
         let pointLightHelper = new THREE.PointLightHelper(pointLight, 1)
         globalScene.add(pointLightHelper)
-
-        const canvas = document.querySelector('canvas[class="webgl"]')
-        canvas.addEventListener('pointerdown', () => {
-            canvas.classList.add('grabbing')
-        });
-        canvas.addEventListener('pointerup', () => {
-            canvas.classList.remove('grabbing')
-        });
 
         // Creating ground grid
         const gridHelper = new THREE.GridHelper(10, 10);
         globalScene.add(gridHelper);
 
-        let loader = new GLTFLoader();
 
+        let loader = new GLTFLoader();
         loader.load('public/models3d/lamp/scene.gltf', function (glb) {
             let cube = glb.scene.children[0];
             cube.position.x = 0;
             cube.position.y = 3;
             cube.position.z = 0;
             cube.scale.set(0.03,0.03,0.03);
-            //scene.add(glb.scene);
+            //globalScene.add(glb.scene);
 
             /*let box = glb.scene;
 
@@ -124,12 +137,6 @@ export default function Editor() {
 
 
 
-
-
-
-        dispatch(setGlobalCamera(camera))
-        dispatch(setGlobalControls(controls))
-        dispatch(setGlobalRenderer(renderer))
         setIsReady(true)
 
     }, [globalScene])
@@ -156,13 +163,16 @@ function RenderWebGL() {
         let id = null
         const animate = (fpsObject) => {
             
-            id = requestAnimationFrame(() => animate(fpsObject) );
+            id = requestAnimationFrame(() => {
+                animate(fpsObject)
+            });
 
             useLimitFps(() => {
                 controls.update();
                 renderer.render( scene, camera );
             }, fpsObject)
         }
+
         animate(fpsObject);
 
         return () => {
