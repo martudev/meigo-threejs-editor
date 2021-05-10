@@ -1,13 +1,13 @@
-import { useSelector } from 'react-redux'
-import { Color, Button } from 'src/tweakpane-react/Input';
-import { Separator } from 'src/tweakpane-react/Separator';
-import Folder from '../../tweakpane-react/Folder';
-import * as THREE from 'three'
-import { setLimitFps, useLimitFps } from 'src/hooks/LimitFps';
+import { useSelector, useDispatch } from 'react-redux'
+import Folder from "src/tweakpane-react/Folder";
+import { Button } from "src/tweakpane-react/Input";
 import { useRef } from 'react';
 import { useEventListener } from 'src/hooks/Listeners';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three'
+import { setGlobalScene } from 'src/redux/actions';
 import JSZip from 'jszip'
+import Project from 'src/models/Project';
 
 
 const createBlobFromZip = async (zip, key) => {
@@ -15,10 +15,13 @@ const createBlobFromZip = async (zip, key) => {
     return new Blob([dataArray])
 }
 
-export function SceneControls() {
+export default function Load() {
+
+    const dispatch = useDispatch()
 
     const scene = useSelector(store => store.scene)
-    const inputRef = useRef()
+    const inputZipRef = useRef()
+    const inputObjRef = useRef()
 
     const onLoadModel = (ev) => {
 
@@ -51,34 +54,48 @@ export function SceneControls() {
             loader.load(gltfFileName, (obj) => {
                 scene.add(obj.scene)
                 objectURLs.forEach( (url) => URL.revokeObjectURL(url) );
+                inputZipRef.current.value = '' // IMPORTANT cleaning the input type file
             })
 
         })
         
     }
 
-    useEventListener('change', onLoadModel, inputRef.current)
+    useEventListener('change', onLoadModel, inputZipRef.current)
 
-    const fpsObject = setLimitFps(60)
-    const handleSceneBackground = (ev) => {
-        useLimitFps(() => {
-            scene.background = new THREE.Color(ev.value);
-        }, fpsObject)
+    const onLoadScene = (event) => {
+        const json = Project.getSceneFromString(event.target.result)
+        new THREE.ObjectLoader().parse(json, (obj) => {
+            dispatch(setGlobalScene(obj))
+            inputObjRef.current.value = '' // IMPORTANT cleaning the input type file
+        })
     }
+
+    const onInputObjChange = (ev) => {
+        const fileList = ev.target.files;
+        var reader = new FileReader()
+        reader.onload = onLoadScene
+        reader.readAsText(fileList[0], 'text/plain;charset=utf-16')
+    }
+
+    useEventListener('change', onInputObjChange, inputObjRef.current)
 
     const handleLoad3DModel = (ev) => {
-        inputRef.current.click()
+        inputZipRef.current.click()
     }
 
+    const handleLoadScene = (ev) => {
+        inputObjRef.current.click()
+    }
 
     return(
         <>
-            <input type="file" multiple="multiple" accept=".zip" style={{ display: 'none' }} ref={inputRef}></input>
-            <Folder title='Scene' expanded={true}>
+            <input type="file" accept=".zip" style={{ display: 'none' }} ref={inputZipRef}></input>
+            <input type="file" accept=".obj" style={{ display: 'none' }} ref={inputObjRef}></input>
+            <Folder title='Load'>
+                <Button title='Load scene' onClick={handleLoadScene} />
                 <Button title='Load 3d Model' onClick={handleLoad3DModel} />
-                <Separator />
-                <Color color={scene.background} name='background' onChange={handleSceneBackground} />
             </Folder>
         </>
-    );
+    )
 }

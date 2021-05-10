@@ -4,9 +4,10 @@ import { useLayoutEffect, useState, useEffect } from 'react';
 import { Button, Point3D } from 'src/tweakpane-react/Input';
 import { useLimitFps } from 'src/hooks/LimitFps';
 import { setLimitFps } from 'src/hooks/LimitFps';
-import { SceneControls } from './SceneControls';
-import { ActionsControls } from './ActionsControls';
 import { useSelector } from 'react-redux'
+import { Scene } from './Scene/Index';
+import { Separator } from 'src/tweakpane-react/Separator';
+import Project from 'src/models/Project';
 
 
 
@@ -98,16 +99,21 @@ export default function GUI() {
         setPopUpWindow(null)
     }
 
+    const handleNewScene = () => {
+        Project.newScene()
+    }
+
     return(
         <>
             <div id="controls"></div>
             <Pane title='Meigo Editor - Tweakpane' expanded={true} container={container}>
-                <Folder title='-- Actions --' expanded={true}>
+                <Folder title='-- Actions --'>
                     {!popUpWindow && <Button title='Open TAB in new window' onClick={handleOpenConfInNewWindow} />}
                     {popUpWindow && <Button title='Close TAB' onClick={handleCloseConfWindow} />}
-                    <ActionsControls />
+                    <Separator />
+                    <Button title='New scene' onClick={handleNewScene} />
                 </Folder>
-                <SceneControls />
+                <Scene />
                 <Folder title='Orbit Camera' expanded={true}>
                     <Point3D position={cameraPosition} name='position' onChange={handleCameraPosition}></Point3D>
                     <Point3D position={cameraRotation} name='rotation' onChange={handleCameraRotation}></Point3D>

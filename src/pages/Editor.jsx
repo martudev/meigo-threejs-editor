@@ -64,9 +64,15 @@ export default function Editor() {
         const removeGrabbingCssClass = () => {
             canvas.classList.remove('grabbing')
         }
+        const onWindowResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight
+            camera.updateProjectionMatrix()
+            renderer.setSize( window.innerWidth, window.innerHeight )
+        }
 
-        canvas.addEventListener('pointerdown', addGrabbingCssClass);
-        canvas.addEventListener('pointerup', removeGrabbingCssClass);
+        canvas.addEventListener('pointerdown', addGrabbingCssClass)
+        canvas.addEventListener('pointerup', removeGrabbingCssClass)
+        window.addEventListener('resize', onWindowResize)
 
         
         
@@ -79,6 +85,7 @@ export default function Editor() {
         return ()  => {
             canvas.removeEventListener('pointerdown', addGrabbingCssClass)
             canvas.removeEventListener('pointerup', removeGrabbingCssClass)
+            window.removeEventListener('resize', onWindowResize)
         }
 
     }, [])
