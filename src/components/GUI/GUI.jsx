@@ -103,6 +103,12 @@ export default function GUI() {
         Project.newScene()
     }
 
+    const rows = []
+
+    /*for(var i=0; i < 10;i++) {
+        rows.push(<div key={i}>hola</div>);
+    }*/
+
     return(
         <>
             <div id="controls"></div>
