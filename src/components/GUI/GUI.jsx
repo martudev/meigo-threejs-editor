@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import { Scene } from './Scene/Index';
 import { Separator } from 'src/tweakpane-react/Separator';
 import Project from 'src/models/Project';
+import AddedObjects from './AddedObjects';
 
 
 
@@ -103,12 +104,6 @@ export default function GUI() {
         Project.newScene()
     }
 
-    const rows = []
-
-    /*for(var i=0; i < 10;i++) {
-        rows.push(<div key={i}>hola</div>);
-    }*/
-
     return(
         <>
             <div id="controls"></div>
@@ -124,6 +119,7 @@ export default function GUI() {
                     <Point3D position={cameraPosition} name='position' onChange={handleCameraPosition}></Point3D>
                     <Point3D position={cameraRotation} name='rotation' onChange={handleCameraRotation}></Point3D>
                 </Folder>
+                <AddedObjects />
             </Pane>
         </>
     );

@@ -28,6 +28,10 @@ export function Color({ color = 'fff', name = 'color', input = 'color', picker =
         })
 
         setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
     }, [current])
 
     useEffect(() => {
@@ -63,6 +67,10 @@ export function Button({ title = 'Undefined', label = undefined, onClick = defau
         })
 
         setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
     }, [current])
 
     useEffect(() => {
@@ -96,6 +104,10 @@ export function String({ name = 'Undefined', value = '', onChange = defaultFunct
         const Input = current.addInput(data, name)
 
         setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
     }, [current])
 
     useOnListener('change', onChange, currentInput)
@@ -139,6 +151,10 @@ export function Point3D({ position = defaultPosition3D, name = 'Undefined',
         })
 
         setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
 
     }, [current])
 

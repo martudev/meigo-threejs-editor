@@ -18,3 +18,16 @@ export const setGlobalRenderer = (renderer) => ({
     type: 'SET_GLOBAL_RENDERER',
     data: renderer
 });
+
+export const AddAmbientLight = () => ({
+    type: 'ADD_AMBIENT_LIGHT'
+});
+
+export const ResetAmbientLight = () => ({
+    type: 'RESET_AMBIENT_LIGHT'
+});
+
+export const RemoveAmbientLight = (id) => ({
+    type: 'REMOVE_AMBIENT_LIGHT',
+    id: id
+});

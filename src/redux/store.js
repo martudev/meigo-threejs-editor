@@ -5,7 +5,13 @@ const defaultState = {
     scene: undefined,
     camera: undefined,
     controls: undefined,
-    renderer: undefined
+    renderer: undefined,
+    added_objects: {
+        AmbientLight: {
+            idToAdd: 1,
+            idToRemove: 0
+        }
+    }
 }
 
 const reducer = (state = defaultState, action) => {
@@ -29,6 +35,22 @@ const reducer = (state = defaultState, action) => {
             return {
                 ...state,
                 renderer: action.data
+            }
+        case 'ADD_AMBIENT_LIGHT':
+            const prevId = state.added_objects.AmbientLight.idToAdd
+            state.added_objects.AmbientLight.idToAdd = prevId + 1
+            return {
+                ...state
+            }
+        case 'REMOVE_AMBIENT_LIGHT':
+            state.added_objects.AmbientLight.idToRemove = action.id
+            return {
+                ...state
+            }
+        case 'RESET_AMBIENT_LIGHT':
+            state.added_objects.AmbientLight.idToAdd = 0
+            return {
+                ...state
             }
         default:
             return state;

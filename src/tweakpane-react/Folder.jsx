@@ -18,6 +18,10 @@ export default function Folder({ children, title = 'Undefined', expanded = false
         setFolder({
             current: sceneFolder
         })
+
+        return () => {
+            sceneFolder.dispose()
+        }
     
     }, [current]);
 
