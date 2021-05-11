@@ -5,7 +5,7 @@ export default function Folder({ children, title = 'Undefined', expanded = false
     
     const current = useContext(PaneContext).current;
 
-    const [folder, setFolder] = useState({ current: current })
+    const [folder, setFolder] = useState(null)
 
     useEffect(() => {
         if(current == null) return
@@ -27,9 +27,11 @@ export default function Folder({ children, title = 'Undefined', expanded = false
 
     return(
         <>
-            <PaneContext.Provider value={folder}>
-                {children}
-            </PaneContext.Provider>
+            {folder &&
+                <PaneContext.Provider value={folder}>
+                    {children}
+                </PaneContext.Provider>
+            }
         </>
     );
 }

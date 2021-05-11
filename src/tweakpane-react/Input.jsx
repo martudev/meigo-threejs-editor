@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useOnListener } from "src/hooks/Listeners";
 import { PaneContext } from "./PaneContext";
+import * as THREE from 'three'
 
 const defaultFunction = () => {}
 
@@ -9,7 +10,7 @@ const getHexStringFormatted = (value) => {
 }
 
 
-export function Color({ color = 'fff', name = 'color', input = 'color', picker = undefined, onChange = defaultFunction }) {
+export function Color({ color = new THREE.Color("#fff") , name = 'Undefined', picker = undefined, onChange = defaultFunction }) {
 
     const current = useContext(PaneContext).current
 
@@ -23,7 +24,7 @@ export function Color({ color = 'fff', name = 'color', input = 'color', picker =
         if(current == null) return
 
         const Input = current.addInput(data, name, {
-            input: input,
+            input: 'color',
             picker: picker
         })
 
@@ -102,6 +103,40 @@ export function String({ name = 'Undefined', value = '', onChange = defaultFunct
         data[name] = value
 
         const Input = current.addInput(data, name)
+
+        setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
+    }, [current])
+
+    useOnListener('change', onChange, currentInput)
+    
+    return(
+        <>
+        </>
+    );
+}
+
+
+
+export function Number({ name = 'Undefined', value = 0, min = undefined, max = undefined, onChange = defaultFunction }) {
+    
+    const current = useContext(PaneContext).current
+
+    const [currentInput, setCurrentInput] = useState(null)
+
+    useEffect(() => {
+        if(current == null) return
+
+        const data = {}
+        data[name] = value
+
+        const Input = current.addInput(data, name, {
+            min: min,
+            max: max
+        })
 
         setCurrentInput(Input)
 
