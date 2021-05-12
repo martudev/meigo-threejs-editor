@@ -10,6 +10,15 @@ const defaultState = {
         AmbientLight: {
             idToAdd: 1,
             idToRemove: 0
+        },
+        PointLight: {
+            idToAdd: 0,
+            idToRemove: 0
+        },
+        Object3D: {
+            idToAdd: 0,
+            object: undefined,
+            idToRemove: 0
         }
     }
 }
@@ -37,7 +46,7 @@ const reducer = (state = defaultState, action) => {
                 renderer: action.data
             }
         case 'ADD_AMBIENT_LIGHT':
-            const prevId = state.added_objects.AmbientLight.idToAdd
+            var prevId = state.added_objects.AmbientLight.idToAdd
             state.added_objects.AmbientLight.idToAdd = prevId + 1
             return {
                 ...state
@@ -49,6 +58,40 @@ const reducer = (state = defaultState, action) => {
             }
         case 'RESET_AMBIENT_LIGHT':
             state.added_objects.AmbientLight.idToAdd = 0
+            return {
+                ...state
+            }
+        case 'ADD_POINT_LIGHT':
+            var prevId = state.added_objects.PointLight.idToAdd
+            state.added_objects.PointLight.idToAdd = prevId + 1
+            return {
+                ...state
+            }
+        case 'REMOVE_POINT_LIGHT':
+            state.added_objects.PointLight.idToRemove = action.id
+            return {
+                ...state
+            }
+        case 'RESET_POINT_LIGHT':
+            state.added_objects.PointLight.idToAdd = 0
+            return {
+                ...state
+            }
+        case 'ADD_OBJECT_3D':
+            var prevId = state.added_objects.Object3D.idToAdd
+            state.added_objects.Object3D.idToAdd = prevId + 1
+            state.added_objects.Object3D.object = action.obj
+            return {
+                ...state
+            }
+        case 'REMOVE_OBJECT_3D':
+            state.added_objects.Object3D.idToRemove = action.id
+            return {
+                ...state
+            }
+        case 'RESET_OBJECT_3D':
+            state.added_objects.Object3D.idToAdd = 0
+            state.added_objects.Object3D.object = null
             return {
                 ...state
             }

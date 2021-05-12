@@ -112,7 +112,7 @@ export default function Editor() {
         //globalScene.add(pointLight);
 
         let pointLightHelper = new THREE.PointLightHelper(pointLight, 1)
-        globalScene.add(pointLightHelper)
+        //globalScene.add(pointLightHelper)
 
         // Creating ground grid
         const gridHelper = new THREE.GridHelper(10, 10);
