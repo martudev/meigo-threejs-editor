@@ -37,7 +37,7 @@ export function useEventListener(eventName, handler, refElement) {
 
 
 
-export function useOnListener(eventName, handler, element = window) {
+export function useOnListener(eventName, handler, element) {
     // Create a ref that stores handler
     const savedHandler = useRef();
     // Update ref.current value if handler changes.
