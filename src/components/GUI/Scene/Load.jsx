@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import Folder from "src/tweakpane-react/Folder";
 import { Button } from "src/tweakpane-react/Input";
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEventListener } from 'src/hooks/Listeners';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three'
@@ -61,7 +61,7 @@ export default function Load() {
         
     }
 
-    useEventListener('change', onLoadModel, inputZipRef.current)
+    useEventListener('change', onLoadModel, inputZipRef)
 
     const onLoadScene = (event) => {
         const json = Project.getSceneFromString(event.target.result)
@@ -78,7 +78,7 @@ export default function Load() {
         reader.readAsText(fileList[0], 'text/plain;charset=utf-16')
     }
 
-    useEventListener('change', onInputObjChange, inputObjRef.current)
+    useEventListener('change', onInputObjChange, inputObjRef)
 
     const handleLoad3DModel = (ev) => {
         inputZipRef.current.click()

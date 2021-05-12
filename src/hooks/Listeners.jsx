@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef } from 'react';
 
 
-export function useEventListener(eventName, handler, element = window) {
+export function useEventListener(eventName, handler, refElement) {
     // Create a ref that stores handler
     const savedHandler = useRef();
+    const element = useRef();
     // Update ref.current value if handler changes.
     // This allows our effect below to always get latest handler ...
     // ... without us needing to pass it in effect deps array ...
@@ -11,22 +12,26 @@ export function useEventListener(eventName, handler, element = window) {
     useLayoutEffect(() => {
       savedHandler.current = handler;
     }, [handler]);
+
+    useLayoutEffect(() => {
+      element.current = refElement.current
+    }, [refElement])
     
     useLayoutEffect(() => {
         // Make sure element supports addEventListener
         // On
-        const isSupported = element && element.addEventListener;
+        const isSupported = element.current && element.current.addEventListener;
         if (!isSupported) return;
         // Create event listener that calls handler function stored in ref
         const eventListener = (event) => savedHandler.current(event);
         // Add event listener
-        element.addEventListener(eventName, eventListener);
+        element.current.addEventListener(eventName, eventListener);
         // Remove event listener on cleanup
         return () => {
-            element.removeEventListener(eventName, eventListener);
+          element.current.removeEventListener(eventName, eventListener);
         };
       },
-      [eventName, element] // Re-run if eventName or element changes
+      [eventName, element.current] // Re-run if eventName or element changes
     );
 }
 
