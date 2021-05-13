@@ -25,6 +25,11 @@ export default function Folder({ children, title = 'Undefined', expanded = false
     
     }, [current]);
 
+    useEffect(() => {
+        if (folder == null) return
+        folder.current.title = title
+    }, [title])
+
     return(
         <>
             {folder &&

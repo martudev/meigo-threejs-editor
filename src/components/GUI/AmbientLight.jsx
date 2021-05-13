@@ -51,12 +51,14 @@ export default function AmbientLight({ title = 'AmbientLight', number = 0, color
     return(
         <>
             {isVisible &&
+            <>
                 <Folder title={title + number}>
                     <Button title='Remove' onClick={handleRemove}></Button>
                     <Separator />
                     <Color color={light.color} name='color' onChange={handleChangeColor}></Color>
                     <Number value={light.intensity} name='intensity' onChange={handleChangeIntensity} ></Number>
                 </Folder>
+            </>
             }
         </>
     )
