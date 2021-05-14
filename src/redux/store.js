@@ -6,6 +6,10 @@ const defaultState = {
     camera: undefined,
     controls: undefined,
     renderer: undefined,
+    grid: {
+        x: 10,
+        y: 10
+    },
     added_objects: {
         AmbientLight: {
             idToAdd: 1,
@@ -44,6 +48,14 @@ const reducer = (state = defaultState, action) => {
             return {
                 ...state,
                 renderer: action.data
+            }
+        case 'SET_GLOBAL_GRID':
+            return {
+                ...state,
+                grid: {
+                    x: action.data.x,
+                    y: action.data.y
+                }
             }
         case 'ADD_AMBIENT_LIGHT':
             var prevId = state.added_objects.AmbientLight.idToAdd

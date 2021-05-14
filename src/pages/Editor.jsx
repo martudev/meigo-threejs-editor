@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import GUI from 'src/components/GUI/GUI';
 import { setLimitFps } from 'src/hooks/LimitFps';
 import { useLimitFps } from 'src/hooks/LimitFps';
-import { setGlobalScene, setGlobalRenderer, setGlobalCamera, setGlobalControls } from 'src/redux/actions';
+import { setGlobalScene, setGlobalRenderer, setGlobalCamera, setGlobalControls, setGlobalGrid } from 'src/redux/actions';
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSaver from 'src/components/AutoSaver';
 import Project from '../models/Project';
@@ -74,6 +74,10 @@ export default function Editor() {
         canvas.addEventListener('pointerup', removeGrabbingCssClass)
         window.addEventListener('resize', onWindowResize)
 
+        // Creating ground grid
+        const gridHelper = new THREE.GridHelper(10, 10);
+        //scene.add(gridHelper);
+
         
         
         dispatch(setGlobalCamera(camera))
@@ -114,9 +118,19 @@ export default function Editor() {
         let pointLightHelper = new THREE.PointLightHelper(pointLight, 1)
         //globalScene.add(pointLightHelper)
 
-        // Creating ground grid
-        const gridHelper = new THREE.GridHelper(10, 10);
-        globalScene.add(gridHelper);
+
+
+
+
+        /*const asd = new THREE.DirectionalLight( "#fff", 1 );
+        asd.position.y = 5
+        const ddd = new THREE.DirectionalLightHelper( asd, 1 );
+        ddd.children[1].scale.z = 5
+        globalScene.add( asd );
+        globalScene.add( ddd );*/
+
+
+
 
 
         let loader = new GLTFLoader();

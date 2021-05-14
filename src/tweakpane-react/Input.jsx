@@ -208,3 +208,54 @@ export function Point3D({ position = defaultPosition3D, name = 'Undefined',
         </>
     );
 }
+
+
+const defaultPosition2D = {
+    x: 0,
+    y: 0
+}
+
+export function Point2D({ position = defaultPosition2D, name = 'Undefined',
+                            picker = undefined, x = undefined, y = undefined,
+                            onChange = defaultFunction }) {
+
+    const current = useContext(PaneContext).current
+
+    const [currentInput, setCurrentInput] = useState(null)
+
+    const defaultState = {}
+    defaultState[name] = position
+    const [data] = useState(defaultState)
+    
+    useEffect(() => {
+        if(current == null) return
+
+        const Input = current.addInput(data, name, {
+            picker: picker,
+            x: x,
+            y: y
+        })
+
+        setCurrentInput(Input)
+
+        return () => {
+            Input.dispose()
+        }
+
+    }, [current])
+
+    useEffect(() => {
+        if(currentInput == null) return
+
+        data[name] = position
+
+        currentInput.refresh()
+    }, [position])
+
+    useOnListener('change', onChange, currentInput)
+
+    return(
+        <>
+        </>
+    );
+}

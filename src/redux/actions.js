@@ -19,6 +19,11 @@ export const setGlobalRenderer = (renderer) => ({
     data: renderer
 });
 
+export const setGlobalGrid = (grid) => ({
+    type: 'SET_GLOBAL_GRID',
+    data: grid
+});
+
 
 /* AMBIENT LIGHT */
 export const AddAmbientLight = () => ({
