@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { useEventListener } from 'src/hooks/Listeners';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three'
-import { AddObject3D, setGlobalScene } from 'src/redux/actions';
+import { AddObject3D } from 'src/redux/actions';
 import JSZip from 'jszip'
 import Project from 'src/models/Project';
 
@@ -51,7 +51,7 @@ export default function Load() {
             const loader = new GLTFLoader(manager)
             loader.load(gltfFileName, (obj) => {
                 console.log(obj.scene)
-                dispatch(AddObject3D(obj.scene))
+                dispatch(AddObject3D({ obj: obj.scene }))
                 objectURLs.forEach( (url) => URL.revokeObjectURL(url) );
                 inputZipRef.current.value = '' // IMPORTANT cleaning the input type file
             })
@@ -63,11 +63,10 @@ export default function Load() {
     useEventListener('change', onLoadModel, inputZipRef)
 
     const onLoadScene = (event) => {
-        const json = Project.getSceneFromString(event.target.result)
-        new THREE.ObjectLoader().parse(json, (obj) => {
-            dispatch(setGlobalScene(obj))
+        const string = event.target.result
+        Project.LoadSceneFromString(() => {
             inputObjRef.current.value = '' // IMPORTANT cleaning the input type file
-        })
+        }, string, dispatch)
     }
 
     const onInputObjChange = (ev) => {

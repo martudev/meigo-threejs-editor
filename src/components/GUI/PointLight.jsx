@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLimitFps, useLimitFps } from "src/hooks/LimitFps";
 import { RemovePointLight } from "src/redux/actions";
 import Folder from "src/tweakpane-react/Folder";
-import { Button, Color, Number, Point3D } from "src/tweakpane-react/Input";
+import { Button, Color, Number, Point3D, String } from "src/tweakpane-react/Input";
 import { Separator } from "src/tweakpane-react/Separator";
+import Tab, { Content } from "src/tweakpane-react/Tab";
 import * as THREE from 'three'
 
 
@@ -16,10 +17,16 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
     const [isVisible, setVisibility] = useState(false)
     const [light, setLight] = useState(null)
     const [helper, setHelper] = useState(null)
+    const [fullTitle, setFullTitle] = useState(title)
+    const [name, setName] = useState(fullTitle)
 
     const handleRemove = () => {
         setVisibility(false)
         dispatch(RemovePointLight(number))
+    }
+
+    const handleChangeName = () => {
+        setFullTitle(name)
     }
 
     const fpsObject_color = setLimitFps(60)
@@ -80,14 +87,22 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
     return(
         <>
             {isVisible &&
-                <Folder title={title + number}>
-                    <Button title='Remove' onClick={handleRemove}></Button>
-                    <Separator />
-                    <Color color={light.color} name='color' onChange={handleChangeColor}></Color>
-                    <Color color={helper.material.color} name='helperColor' onChange={handleChangeHelperColor}></Color>
-                    <Number value={light.intensity} name='intensity' onChange={handleChangeIntensity}></Number>
-                    <Number value={helper.scale.x} name='size' onChange={handleChangeSize}></Number>
-                    <Point3D position={light.position} name='position' onChange={handleChangePosition}></Point3D>
+                <Folder title={fullTitle}>
+                    <Tab>
+                        <Content title='Values'>
+                            <Color color={light.color} name='color' onChange={handleChangeColor}></Color>
+                            <Color color={helper.material.color} name='helperColor' onChange={handleChangeHelperColor}></Color>
+                            <Number value={light.intensity} name='intensity' onChange={handleChangeIntensity}></Number>
+                            <Number value={helper.scale.x} name='size' onChange={handleChangeSize}></Number>
+                            <Point3D position={light.position} name='position' onChange={handleChangePosition}></Point3D>
+                        </Content>
+                        <Content title='Actions'>
+                            <Button title='Remove' onClick={handleRemove}></Button>
+                            <Separator />
+                            <String name='name' value={fullTitle} onChange={(ev) => setName(ev.value)}></String>
+                            <Button title='Change name' onClick={handleChangeName}></Button>
+                        </Content>
+                    </Tab>
                 </Folder>
             }
         </>

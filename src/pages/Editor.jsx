@@ -24,15 +24,7 @@ export default function Editor() {
         let scene = new THREE.Scene();
         scene.background = new THREE.Color("#4d4d4d");
 
-        const json = Project.getSceneFromLocalStorage()
-
-        if (json != null) {
-            const sceneParsed = new THREE.ObjectLoader().parse(json)
-
-            if (sceneParsed.uuid != scene.uuid) {
-                scene = sceneParsed
-            }
-        }
+        scene = Project.CompareAndLoadSceneFromStorage(scene, dispatch)
 
 
         // Camera
@@ -73,10 +65,6 @@ export default function Editor() {
         canvas.addEventListener('pointerdown', addGrabbingCssClass)
         canvas.addEventListener('pointerup', removeGrabbingCssClass)
         window.addEventListener('resize', onWindowResize)
-
-        // Creating ground grid
-        const gridHelper = new THREE.GridHelper(10, 10);
-        //scene.add(gridHelper);
 
         
         

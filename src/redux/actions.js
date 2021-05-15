@@ -26,46 +26,49 @@ export const setGlobalGrid = (grid) => ({
 
 
 /* AMBIENT LIGHT */
-export const AddAmbientLight = () => ({
-    type: 'ADD_AMBIENT_LIGHT'
-});
-
-export const ResetAmbientLight = () => ({
-    type: 'RESET_AMBIENT_LIGHT'
+export const AddAmbientLight = ({ name = undefined } = {}) => ({
+    type: 'ADD_AMBIENT_LIGHT',
+    data: {
+        name
+    }
 });
 
 export const RemoveAmbientLight = (id) => ({
     type: 'REMOVE_AMBIENT_LIGHT',
-    id: id
+    data: {
+        id
+    }
 });
 
 
 /* POINT LIGHT */
-export const AddPointLight = () => ({
-    type: 'ADD_POINT_LIGHT'
-});
-
-export const ResetPointLight = () => ({
-    type: 'RESET_POINT_LIGHT'
+export const AddPointLight = ({ name = undefined } = {}) => ({
+    type: 'ADD_POINT_LIGHT',
+    data: {
+        name
+    }
 });
 
 export const RemovePointLight = (id) => ({
     type: 'REMOVE_POINT_LIGHT',
-    id: id
+    data: {
+        id
+    }
 });
 
 
 /* OBJECT 3D */
-export const AddObject3D = (obj) => ({
+export const AddObject3D = ({ name = undefined, obj = undefined } = {}) => ({
     type: 'ADD_OBJECT_3D',
-    obj: obj
-});
-
-export const ResetObject3D = () => ({
-    type: 'RESET_OBJECT_3D'
+    data: {
+        name,
+        obj
+    }
 });
 
 export const RemoveObject3D = (id) => ({
     type: 'REMOVE_OBJECT_3D',
-    id: id
+    data: {
+        id
+    }
 });

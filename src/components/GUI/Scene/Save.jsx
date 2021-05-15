@@ -12,12 +12,17 @@ const getCurrentDateTimeFormatted = () => {
 export function Save() {
 
     const scene = useSelector(store => store.scene);
+    const grid = useSelector(store => store.grid);
     const [fileNameSaveSection, setFileNameSaveSection] = useState(getCurrentDateTimeFormatted())
     const [titleSaveSection, setTitleSaveSection] = useState('Save scene')
 
     const handleSaveScene = (ev) => {
         setTitleSaveSection('Saving...')
-        Project.saveSceneAsFile(scene, fileNameSaveSection)
+        Project.saveSceneAsFile({ 
+            scene: scene,
+            grid: grid,
+            fileName: fileNameSaveSection
+        })
         setTitleSaveSection('Save scene')
     }
 

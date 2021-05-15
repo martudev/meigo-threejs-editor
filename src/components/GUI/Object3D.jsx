@@ -14,7 +14,7 @@ export default function Object3D({ title = 'Object3D', number = 0, obj = undefin
 
     const scene = useSelector(store => store.scene)
     const [isVisible, setVisibility] = useState(false)
-    const [fullTitle, setFullTitle] = useState(title + number)
+    const [fullTitle, setFullTitle] = useState(title)
     const [name, setName] = useState(fullTitle)
 
     const handleRemove = () => {

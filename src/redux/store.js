@@ -12,16 +12,17 @@ const defaultState = {
     },
     added_objects: {
         AmbientLight: {
-            idToAdd: 1,
+            objects: [
+                {id: 1, name: 'AmbientLight1'},
+            ],
             idToRemove: 0
         },
         PointLight: {
-            idToAdd: 0,
+            objects: [],
             idToRemove: 0
         },
         Object3D: {
-            idToAdd: 0,
-            object: undefined,
+            objects: [],
             idToRemove: 0
         }
     }
@@ -58,52 +59,81 @@ const reducer = (state = defaultState, action) => {
                 }
             }
         case 'ADD_AMBIENT_LIGHT':
-            var prevId = state.added_objects.AmbientLight.idToAdd
-            state.added_objects.AmbientLight.idToAdd = prevId + 1
+            var objects = [...state.added_objects.AmbientLight.objects]
+            var lastObj = objects[objects.length-1]
+            var currentId = 1
+            if (lastObj != null) currentId = lastObj.id + 1
+            var name = action.data.name
+            if (name == null) name = 'AmbientLight' + currentId
+            var array = [
+                {
+                    id: currentId,
+                    name: name
+                }
+            ]
+            state.added_objects.AmbientLight.objects = [...state.added_objects.AmbientLight.objects, ...array]
             return {
                 ...state
             }
         case 'REMOVE_AMBIENT_LIGHT':
-            state.added_objects.AmbientLight.idToRemove = action.id
-            return {
-                ...state
-            }
-        case 'RESET_AMBIENT_LIGHT':
-            state.added_objects.AmbientLight.idToAdd = 0
+            var objects = [...state.added_objects.AmbientLight.objects]
+            var obj = objects.find(obj => obj.id == action.data.id)
+            objects.splice(objects.indexOf(obj), 1)
+            state.added_objects.AmbientLight.objects = objects
+            state.added_objects.AmbientLight.idToRemove = obj.id
             return {
                 ...state
             }
         case 'ADD_POINT_LIGHT':
-            var prevId = state.added_objects.PointLight.idToAdd
-            state.added_objects.PointLight.idToAdd = prevId + 1
+            var objects = [...state.added_objects.PointLight.objects]
+            var lastObj = objects[objects.length-1]
+            var currentId = 1
+            if (lastObj != null) currentId = lastObj.id + 1
+            var name = action.data.name
+            if (name == null) name = 'PointLight' + currentId
+            var array = [
+                {
+                    id: currentId,
+                    name: name
+                }
+            ]
+            state.added_objects.PointLight.objects = [...state.added_objects.PointLight.objects, ...array]
             return {
                 ...state
             }
         case 'REMOVE_POINT_LIGHT':
-            state.added_objects.PointLight.idToRemove = action.id
-            return {
-                ...state
-            }
-        case 'RESET_POINT_LIGHT':
-            state.added_objects.PointLight.idToAdd = 0
+            var objects = [...state.added_objects.PointLight.objects]
+            var obj = objects.find(obj => obj.id == action.data.id)
+            objects.splice(objects.indexOf(obj), 1)
+            state.added_objects.PointLight.objects = objects
+            state.added_objects.PointLight.idToRemove = obj.id
             return {
                 ...state
             }
         case 'ADD_OBJECT_3D':
-            var prevId = state.added_objects.Object3D.idToAdd
-            state.added_objects.Object3D.idToAdd = prevId + 1
-            state.added_objects.Object3D.object = action.obj
+            var objects = [...state.added_objects.Object3D.objects]
+            var lastObj = objects[objects.length-1]
+            var currentId = 1
+            if (lastObj != null) currentId = lastObj.id + 1
+            var name = action.data.name
+            if (name == null) name = 'Object3D' + currentId
+            var array = [
+                {
+                    id: currentId,
+                    name: name,
+                    object: action.data.obj
+                }
+            ]
+            state.added_objects.Object3D.objects = [...state.added_objects.Object3D.objects, ...array]
             return {
                 ...state
             }
         case 'REMOVE_OBJECT_3D':
-            state.added_objects.Object3D.idToRemove = action.id
-            return {
-                ...state
-            }
-        case 'RESET_OBJECT_3D':
-            state.added_objects.Object3D.idToAdd = 0
-            state.added_objects.Object3D.object = null
+            var objects = [...state.added_objects.Object3D.objects]
+            var obj = objects.find(obj => obj.id == action.data.id)
+            objects.splice(objects.indexOf(obj), 1)
+            state.added_objects.Object3D.objects = objects
+            state.added_objects.Object3D.idToRemove = obj.id
             return {
                 ...state
             }

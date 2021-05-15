@@ -5,12 +5,13 @@ import Proyect from '../models/Project'
 
 export default function AutoSaver() {
     const scene = useSelector(store => store.scene)
+    const grid = useSelector(store => store.grid)
 
     useEffect(() => {
 
         const id = setInterval(() => {
             if(document.hasFocus()) {
-                //Proyect.saveSceneAsLocalStorage(scene)
+                //Proyect.saveSceneAsLocalStorage({ scene, grid })
             }
         }, 15000)
 
