@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLimitFps, useLimitFps } from "src/hooks/LimitFps";
-import { RemovePointLight } from "src/redux/actions";
+import { PointLightActions } from "src/redux/PointLight/actions";
 import Folder from "src/tweakpane-react/Folder";
 import { Button, Color, Number, Point3D, String } from "src/tweakpane-react/Input";
 import { Separator } from "src/tweakpane-react/Separator";
@@ -12,7 +12,7 @@ import * as THREE from 'three'
 export default function PointLight({ title = 'PointLight', number = 0, color = '#e0d89e', intensity = 8 }) {
 
     const dispatch = useDispatch()
-    const scene = useSelector(store => store.scene)
+    const scene = useSelector(store => store.scene.value)
 
     const [isVisible, setVisibility] = useState(false)
     const [light, setLight] = useState(null)
@@ -20,9 +20,13 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
     const [fullTitle, setFullTitle] = useState(title)
     const [name, setName] = useState(fullTitle)
 
+    useEffect(() => {
+        setFullTitle(title)
+    }, [title])
+
     const handleRemove = () => {
         setVisibility(false)
-        dispatch(RemovePointLight(number))
+        dispatch(PointLightActions.Remove(number))
     }
 
     const handleChangeName = () => {

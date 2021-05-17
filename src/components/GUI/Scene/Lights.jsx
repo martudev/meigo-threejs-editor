@@ -1,19 +1,28 @@
-import { useDispatch } from "react-redux";
-import { AddAmbientLight, AddPointLight } from "src/redux/actions";
+import { useDispatch, useSelector} from "react-redux";
+import { AmbientLightActions } from "src/redux/AmbientLight/actions";
 import Folder from "src/tweakpane-react/Folder";
 import { Button } from "src/tweakpane-react/Input";
+import * as THREE from 'three'
 
 
 export default function Lights() {
 
     const dispatch = useDispatch()
 
+    const scene = useSelector(store => store.scene.value)
+
     const handleAddAmbientLight = () => {
-        dispatch(AddAmbientLight())
+        const light = new THREE.AmbientLight('#4d4d4d', 8);
+        scene.add(light)
+        dispatch(AmbientLightActions.Add({
+            light: light
+        }))
     }
 
     const handleAddPointLight = () => {
-        dispatch(AddPointLight())
+        const light = new THREE.PointLight('#e0d89e', 8);
+        scene.add(light)
+        //dispatch(AddPointLight())
     }
 
     return(

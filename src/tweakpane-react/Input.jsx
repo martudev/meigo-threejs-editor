@@ -111,6 +111,12 @@ export function String({ name = 'Undefined', value = '', onChange = defaultFunct
         }
     }, [current])
 
+    useEffect(() => {
+        if (currentInput == null) return
+
+        currentInput.controller_.binding.value.rawValue = value
+    }, [value])
+
     useOnListener('change', onChange, currentInput)
     
     return(

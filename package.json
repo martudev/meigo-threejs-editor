@@ -4,13 +4,12 @@
   "dependencies": {
     "dotenv": "8.2.0",
     "file-saver": "2.0.5",
-    "jszip": "^3.6.0",
+    "jszip": "3.6.0",
     "lz-string": "1.4.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-redux": "^7.2.4",
+    "react-redux": "7.2.4",
     "react-router-dom": "5.2.0",
-    "react-scripts": "4.0.3",
     "sass": "1.32.11",
     "three": "0.128.0",
     "tweakpane": "2.4.2",
@@ -19,7 +18,6 @@
   "scripts": {
     "dev": "webpack serve --config webpack/webpack.dev.js",
     "build": "webpack --config webpack/webpack.prod.js",
-    "eject": "react-scripts eject",
     "heroku-postbuild": "webpack --config webpack/webpack.prod.js",
     "generate-report": "webpack --profile --json=compilation-stats.json",
     "build-report": "webpack --config webpack/webpack.report.js"

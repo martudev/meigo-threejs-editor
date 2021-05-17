@@ -7,16 +7,16 @@ import { setLimitFps, useLimitFps } from 'src/hooks/LimitFps';
 import Load from './Load';
 import { Save } from './Save';
 import Lights from './Lights';
-import { setGlobalGrid } from 'src/redux/actions';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { setGrid } from 'src/redux/Grid/actions';
 
 
 export function Scene() {
 
     const dispatch = useDispatch()
 
-    const scene = useSelector(store => store.scene)
-    const grid = useSelector(store => store.grid)
+    const scene = useSelector(store => store.scene.value)
+    const grid = useSelector(store => store.grid.value)
 
     const fpsObject_background = setLimitFps(60)
     const handleSceneBackground = (ev) => {
@@ -28,7 +28,7 @@ export function Scene() {
     const fpsObject_grid = setLimitFps(60)
     const handleChangeGrid = (ev) => {
         useLimitFps(() => {
-            dispatch(setGlobalGrid({
+            dispatch(setGrid({
                 x: ev.value.x,
                 y: ev.value.y
             }))

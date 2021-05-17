@@ -14,8 +14,8 @@ import AddedObjects from './AddedObjects';
 
 export default function GUI() {
 
-    const camera = useSelector(store => store.camera)
-    const controls = useSelector(store => store.controls)
+    const camera = useSelector(store => store.camera.value)
+    const controls = useSelector(store => store.controls.value)
 
     const [container, setContainer] = useState(null)
     const [popUpWindow, setPopUpWindow] = useState(null)

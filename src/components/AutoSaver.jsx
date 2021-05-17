@@ -4,14 +4,18 @@ import Proyect from '../models/Project'
 
 
 export default function AutoSaver() {
-    const scene = useSelector(store => store.scene)
-    const grid = useSelector(store => store.grid)
+
+    const scene = useSelector(store => store.scene.value)
+    const grid = useSelector(store => store.grid.value)
+    const ambientLights = useSelector(store => store.AmbientLight.value.objects);
+    const pointLights = useSelector(store => store.PointLight.value.objects);
+    const object3ds = useSelector(store => store.Object3D.value.objects);
 
     useEffect(() => {
 
         const id = setInterval(() => {
             if(document.hasFocus()) {
-                //Proyect.saveSceneAsLocalStorage({ scene, grid })
+                //Proyect.saveSceneAsLocalStorage({ scene, grid, ambientLights, pointLights, object3ds })
             }
         }, 15000)
 

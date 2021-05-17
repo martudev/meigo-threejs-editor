@@ -8,6 +8,7 @@ import * as THREE from 'three'
 import { AddObject3D } from 'src/redux/actions';
 import JSZip from 'jszip'
 import Project from 'src/models/Project';
+import { Object3DActions } from 'src/redux/Object3D/actions';
 
 
 const createBlobFromZip = async (zip, key) => {
@@ -51,7 +52,7 @@ export default function Load() {
             const loader = new GLTFLoader(manager)
             loader.load(gltfFileName, (obj) => {
                 console.log(obj.scene)
-                dispatch(AddObject3D({ obj: obj.scene }))
+                dispatch(Object3DActions.Add({ obj: obj.scene }))
                 objectURLs.forEach( (url) => URL.revokeObjectURL(url) );
                 inputZipRef.current.value = '' // IMPORTANT cleaning the input type file
             })

@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLimitFps, useLimitFps } from "src/hooks/LimitFps";
-import { RemoveObject3D } from "src/redux/actions";
 import Folder from "src/tweakpane-react/Folder";
 import Tab, { Content } from "src/tweakpane-react/Tab";
 import { Button, Point3D, String } from "src/tweakpane-react/Input";
 import { Separator } from "src/tweakpane-react/Separator";
+import { Object3DActions } from "src/redux/Object3D/actions";
 
 
 export default function Object3D({ title = 'Object3D', number = 0, obj = undefined }) {
 
     const dispatch = useDispatch()
 
-    const scene = useSelector(store => store.scene)
+    const scene = useSelector(store => store.scene.value)
     const [isVisible, setVisibility] = useState(false)
     const [fullTitle, setFullTitle] = useState(title)
     const [name, setName] = useState(fullTitle)
 
+    useEffect(() => {
+        setFullTitle(title)
+    }, [title])
+
     const handleRemove = () => {
         setVisibility(false)
-        dispatch(RemoveObject3D(number))
+        dispatch(Object3DActions.Remove(number))
     }
 
     const handleChangeName = () => {

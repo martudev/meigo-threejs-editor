@@ -6,16 +6,19 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import GUI from 'src/components/GUI/GUI';
 import { setLimitFps } from 'src/hooks/LimitFps';
 import { useLimitFps } from 'src/hooks/LimitFps';
-import { setGlobalScene, setGlobalRenderer, setGlobalCamera, setGlobalControls, setGlobalGrid } from 'src/redux/actions';
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSaver from 'src/components/AutoSaver';
 import Project from '../models/Project';
+import { setCamera } from 'src/redux/Camera/actions';
+import { setControls } from 'src/redux/Controls/actions';
+import { setRenderer } from 'src/redux/Renderer/actions';
+import { setScene } from 'src/redux/Scene/actions';
 
 export default function Editor() {
 
     const dispatch = useDispatch()
 
-    const globalScene = useSelector(store => store.scene)
+    const globalScene = useSelector(store => store.scene.value)
     const [isReady, setIsReady] = useState(false)
 
     useLayoutEffect(() => {
@@ -68,10 +71,10 @@ export default function Editor() {
 
         
         
-        dispatch(setGlobalCamera(camera))
-        dispatch(setGlobalControls(controls))
-        dispatch(setGlobalRenderer(renderer))
-        dispatch(setGlobalScene(scene))
+        dispatch(setCamera(camera))
+        dispatch(setControls(controls))
+        dispatch(setRenderer(renderer))
+        dispatch(setScene(scene))
 
 
         return ()  => {
@@ -161,10 +164,10 @@ export default function Editor() {
 
 function RenderWebGL() {
 
-    const scene = useSelector(store => store.scene)
-    const camera = useSelector(store => store.camera)
-    const controls = useSelector(store => store.controls)
-    const renderer = useSelector(store => store.renderer)
+    const scene = useSelector(store => store.scene.value)
+    const camera = useSelector(store => store.camera.value)
+    const controls = useSelector(store => store.controls.value)
+    const renderer = useSelector(store => store.renderer.value)
 
     useEffect(() => {
 

@@ -11,17 +11,24 @@ const getCurrentDateTimeFormatted = () => {
 
 export function Save() {
 
-    const scene = useSelector(store => store.scene);
-    const grid = useSelector(store => store.grid);
+    const scene = useSelector(store => store.scene.value)
+    const grid = useSelector(store => store.grid.value)
     const [fileNameSaveSection, setFileNameSaveSection] = useState(getCurrentDateTimeFormatted())
     const [titleSaveSection, setTitleSaveSection] = useState('Save scene')
+    
+    const AmbientLight_objects = useSelector(store => store.AmbientLight.value.objects);
+    const PointLight_objects = useSelector(store => store.PointLight.value.objects);
+    const Object3D_objects = useSelector(store => store.Object3D.value.objects);
 
     const handleSaveScene = (ev) => {
         setTitleSaveSection('Saving...')
         Project.saveSceneAsFile({ 
             scene: scene,
             grid: grid,
-            fileName: fileNameSaveSection
+            ambientLights: AmbientLight_objects,
+            pointLights: PointLight_objects,
+            object3ds: Object3D_objects,
+            fileName: fileNameSaveSection,
         })
         setTitleSaveSection('Save scene')
     }
@@ -37,7 +44,7 @@ export function Save() {
     return(
         <>
             <Folder title='Save'>
-                <String name='File name' value={getCurrentDateTimeFormatted()} onChange={handleOnChangeFileName}></String>
+                <String name='File name' value={fileNameSaveSection} onChange={handleOnChangeFileName}></String>
                 <Button title={titleSaveSection} onClick={handleSaveScene} />
                 <Button title='Export scene' onClick={handleExportScene} />
             </Folder>
