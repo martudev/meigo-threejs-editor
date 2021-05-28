@@ -9,28 +9,32 @@ import Tab, { Content } from "src/tweakpane-react/Tab";
 import * as THREE from 'three'
 
 
-export default function PointLight({ title = 'PointLight', number = 0, color = '#e0d89e', intensity = 8 }) {
+export default function PointLight({ title = 'PointLight', id = 0, uuid = undefined,
+                                    helperData = undefined }) {
 
     const dispatch = useDispatch()
     const scene = useSelector(store => store.scene.value)
 
     const [isVisible, setVisibility] = useState(false)
-    const [light, setLight] = useState(null)
     const [helper, setHelper] = useState(null)
     const [fullTitle, setFullTitle] = useState(title)
     const [name, setName] = useState(fullTitle)
 
-    useEffect(() => {
-        setFullTitle(title)
-    }, [title])
+    const getLight = () => {
+        return scene.children.find(child => child.uuid == uuid)
+    }
+
+    const [light] = useState(getLight())
 
     const handleRemove = () => {
         setVisibility(false)
-        dispatch(PointLightActions.Remove(number))
+        scene.remove(light)
+        dispatch(PointLightActions.Remove(id))
     }
 
     const handleChangeName = () => {
         setFullTitle(name)
+        dispatch(PointLightActions.SetName(id, name))
     }
 
     const fpsObject_color = setLimitFps(60)
@@ -44,6 +48,7 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
     const handleChangeHelperColor = (ev) => {
         useLimitFps(() => {
             helper.material.color = new THREE.Color(ev.value)
+            dispatch(PointLightActions.SetHelperColor(id, ev.value))
         }, fpsObject_helpercolor)
     }
 
@@ -73,20 +78,18 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
     }
 
     useEffect(() => {
-        const light = new THREE.PointLight(color, intensity);
-        const helper = new THREE.PointLightHelper(light, 1)
-        scene.add(light)
+        const helper = new THREE.PointLightHelper(getLight(), 1, helperData.color);
         scene.add(helper)
 
-        setLight(light)
         setHelper(helper)
         setVisibility(true)
 
         return () => {
-            scene.remove(light)
+            console.log('testgin remove pointlight')
             scene.remove(helper)
         }
     }, [])
+
 
     return(
         <>
@@ -97,7 +100,7 @@ export default function PointLight({ title = 'PointLight', number = 0, color = '
                             <Color color={light.color} name='color' onChange={handleChangeColor}></Color>
                             <Color color={helper.material.color} name='helperColor' onChange={handleChangeHelperColor}></Color>
                             <Number value={light.intensity} name='intensity' onChange={handleChangeIntensity}></Number>
-                            <Number value={helper.scale.x} name='size' onChange={handleChangeSize}></Number>
+                            <Number value={light.scale.x} name='size' onChange={handleChangeSize}></Number>
                             <Point3D position={light.position} name='position' onChange={handleChangePosition}></Point3D>
                         </Content>
                         <Content title='Actions'>

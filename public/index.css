@@ -1,8 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Telex&display=swap");
+
+@font-face {
+  font-family: GilRoy-Bold;
+  src: url("./fonts/Gilroy-ExtraBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: GilRoy-Light;
+  src: url("./fonts/Gilroy-Light.otf") format("opentype");
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
+  background-color: #4d4d4d;
+  font-family: "Telex";
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

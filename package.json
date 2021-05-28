@@ -10,7 +10,9 @@
     "react-dom": "17.0.2",
     "react-redux": "7.2.4",
     "react-router-dom": "5.2.0",
+    "redux-in-worker": "0.7.0",
     "sass": "1.32.11",
+    "styled-components": "5.3.0",
     "three": "0.128.0",
     "tweakpane": "2.4.2",
     "web-vitals": "1.1.1"
@@ -61,6 +63,7 @@
     "webpack-bundle-analyzer": "4.4.1",
     "webpack-cli": "4.6.0",
     "webpack-dev-server": "3.11.2",
-    "webpack-merge": "5.7.3"
+    "webpack-merge": "5.7.3",
+    "worker-loader": "3.0.8"
   }
 }

@@ -1,6 +1,5 @@
 import { saveAs } from 'file-saver';
 import LZString from 'lz-string'
-import { SetAmbientLights, setGlobalGrid, setGlobalScene, SetObjects3D, SetPointLights } from 'src/redux/actions';
 import { AmbientLightActions } from 'src/redux/AmbientLight/actions';
 import { setGrid } from 'src/redux/Grid/actions';
 import { Object3DActions } from 'src/redux/Object3D/actions';
@@ -12,13 +11,11 @@ import * as THREE from 'three'
 
 export default class Project {
 
-    static compressScene({ scene, grid, ambientLights, pointLights, object3ds }) {
-        if(scene == null) return
+    static compressScene(sceneJson, { grid, ambientLights, pointLights, object3ds }) {
+        if(sceneJson == null) return
 
-        scene.updateMatrixWorld(); // es importante para el tamaño de los componentes
-        const result = scene.toJSON();
         const compressed = LZString.compressToUTF16(JSON.stringify({
-            scene: result,
+            scene: sceneJson,
             grid: grid,
             ambientLights: ambientLights,
             pointLights: pointLights,
@@ -27,13 +24,19 @@ export default class Project {
         return compressed
     }
 
-    static saveSceneAsFile({ scene, grid, ambientLights, pointLights, object3ds, fileName }) {
-        if(scene == null) return
+    static prepareSceneToSave(scene) {
+        scene.updateMatrixWorld()
+        return scene.toJSON()
+    }
+
+    static saveSceneAsFile({ sceneJson, grid, ambientLights, pointLights, object3ds, fileName }) {
+        if(sceneJson == null) return
         if(fileName == null || fileName === '') return
 
-        const output = this.compressScene({ scene, grid, ambientLights, pointLights, object3ds })
+        const output = this.compressScene(sceneJson, { grid, ambientLights, pointLights, object3ds })
         var file = new File([output], `${fileName}.obj`, {type: "text/plain;charset=utf-16"});
-        saveAs(file)
+        //saveAs(file)
+        return file
     }
 
     static decompressScene(obj) {
@@ -46,7 +49,8 @@ export default class Project {
     static saveSceneAsLocalStorage({ scene, grid, ambientLights, pointLights, object3ds  }) {
         if(scene == null) return
 
-        const output = this.compressScene({ scene, grid, ambientLights, pointLights, object3ds })
+        const sceneJson = this.prepareSceneToSave(scene)
+        const output = this.compressScene(sceneJson, { grid, ambientLights, pointLights, object3ds })
         localStorage.setItem('threejsEditor.scene', output)
     }
 

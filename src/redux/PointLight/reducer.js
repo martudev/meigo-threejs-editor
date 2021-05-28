@@ -15,13 +15,38 @@ const reducer = (state = defaultState, action) => {
                 if (lastObj != null) currentId = lastObj.id + 1
                 var name = action.data.name
                 if (name == null) name = 'PointLight' + currentId
+                var uuid = action.data.light.uuid
                 var array = [
                     {
                         id: currentId,
-                        name: name
+                        name: name,
+                        uuid: uuid,
+                        helper: action.data.helper
                     }
                 ]
                 state.value.objects = [...objects, ...array]
+                return {
+                    ...state
+                }
+            case 'SET_NAME':
+                var objects = [...state.value.objects]
+                var obj = objects.find(obj => obj.id == action.data.id)
+                if (obj != null) {
+                    var index = objects.indexOf(obj)
+                    obj.name = action.data.name
+                    state.value.objects[index] = obj
+                }
+                return {
+                    ...state
+                }
+            case 'SET_HELPER_COLOR':
+                var objects = [...state.value.objects]
+                var obj = objects.find(obj => obj.id == action.data.id)
+                if (obj != null) {
+                    var index = objects.indexOf(obj)
+                    obj.helper.color = action.data.color
+                    state.value.objects[index] = obj
+                }
                 return {
                     ...state
                 }

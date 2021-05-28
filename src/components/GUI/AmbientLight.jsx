@@ -9,8 +9,7 @@ import Tab, { Content } from "src/tweakpane-react/Tab";
 import * as THREE from 'three'
 
 
-export default function AmbientLight({ title = 'AmbientLight', id = 0, uuid = undefined,
-                                    color = new THREE.Color('#4d4d4d'), intensity = 8 }) {
+export default function AmbientLight({ title = 'AmbientLight', id = 0, uuid = undefined}) {
 
     const dispatch = useDispatch()
     const scene = useSelector(store => store.scene.value)
@@ -57,8 +56,8 @@ export default function AmbientLight({ title = 'AmbientLight', id = 0, uuid = un
                 <Folder title={fullTitle}>
                 <Tab>
                     <Content title='Values'>
-                        <Color color={color} name='color' onChange={handleChangeColor}></Color>
-                        <Number value={intensity} name='intensity' onChange={handleChangeIntensity} ></Number>
+                        <Color color={getLight().color} name='color' onChange={handleChangeColor}></Color>
+                        <Number value={getLight().intensity} name='intensity' onChange={handleChangeIntensity} ></Number>
                     </Content>
                     <Content title='Actions'>
                         <Button title='Remove' onClick={handleRemove}></Button>

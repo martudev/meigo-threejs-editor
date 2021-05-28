@@ -14,6 +14,10 @@ module.exports = merge(common,
             open: true,
             historyApiFallback: true,
             port: 3000,
+            headers: { // Important to dont get errors with SharedArrayBuffer since https://developer.chrome.com/blog/enabling-shared-array-buffer/
+                'Cross-Origin-Embedder-Policy': 'require-corp',
+                'Cross-Origin-Opener-Policy': 'same-origin'
+            }
         },
         output: {
             filename: 'js/[name].bundle.js',

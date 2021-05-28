@@ -2,13 +2,33 @@
 const CLASS = 'POINT_LIGHT'
 
 export class PointLightActions {
-    static Add = ({ name = undefined } = {}) => ({
+    static Add = ({ name = undefined, light = undefined, helper = undefined } = {}) => ({
         class: CLASS,
         type: 'ADD',
         data: {
-            name
+            name,
+            light,
+            helper
         }
     });
+
+    static SetName = (id, name) => ({
+        class: CLASS,
+        type: 'SET_NAME',
+        data: {
+            id,
+            name
+        }
+    })
+
+    static SetHelperColor = (id, color) => ({
+        class: CLASS,
+        type: 'SET_HELPER_COLOR',
+        data: {
+            id,
+            color
+        }
+    })
     
     static SetLights = (data) => ({
         class: CLASS,

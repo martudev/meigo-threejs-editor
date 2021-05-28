@@ -68,7 +68,11 @@ module.exports = merge(alias, {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                use: 'babel-loader',
+                use: 'babel-loader'
+            },
+            {
+                test: /\.worker\.js$/,
+                use: ["worker-loader", "babel-loader"],
             },
             {
                 test: /\.(css|scss|sass)$/,

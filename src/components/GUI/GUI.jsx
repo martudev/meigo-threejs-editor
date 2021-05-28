@@ -107,7 +107,7 @@ export default function GUI() {
     return(
         <>
             <div id="controls"></div>
-            <Pane title='Meigo Editor - Tweakpane' expanded={true} container={container}>
+            <Pane title='Medusa Editor - Tweakpane' expanded={true} container={container}>
                 <Folder title='-- Actions --'>
                     {!popUpWindow && <Button title='Open TAB in new window' onClick={handleOpenConfInNewWindow} />}
                     {popUpWindow && <Button title='Close TAB' onClick={handleCloseConfWindow} />}

@@ -1,5 +1,6 @@
 import { useDispatch, useSelector} from "react-redux";
 import { AmbientLightActions } from "src/redux/AmbientLight/actions";
+import { PointLightActions } from "src/redux/PointLight/actions";
 import Folder from "src/tweakpane-react/Folder";
 import { Button } from "src/tweakpane-react/Input";
 import * as THREE from 'three'
@@ -22,7 +23,12 @@ export default function Lights() {
     const handleAddPointLight = () => {
         const light = new THREE.PointLight('#e0d89e', 8);
         scene.add(light)
-        //dispatch(AddPointLight())
+        dispatch(PointLightActions.Add({
+            light: light,
+            helper: {
+                color: '#e0d89e'
+            }
+        }))
     }
 
     return(

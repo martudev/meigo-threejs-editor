@@ -15,14 +15,26 @@ const reducer = (state = defaultState, action) => {
             if (lastObj != null) currentId = lastObj.id + 1
             var name = action.data.name
             if (name == null) name = 'Object3D' + currentId
+            var uuid = action.data.obj.uuid
             var array = [
                 {
                     id: currentId,
                     name: name,
-                    object: action.data.obj
+                    uuid: uuid
                 }
             ]
             state.value.objects = [...objects, ...array]
+            return {
+                ...state
+            }
+        case 'SET_NAME':
+            var objects = [...state.value.objects]
+            var obj = objects.find(obj => obj.id == action.data.id)
+            if (obj != null) {
+                var index = objects.indexOf(obj)
+                obj.name = action.data.name
+                state.value.objects[index] = obj
+            }
             return {
                 ...state
             }

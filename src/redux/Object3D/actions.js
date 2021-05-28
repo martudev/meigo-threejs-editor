@@ -11,6 +11,15 @@ export class Object3DActions {
             obj
         }
     })
+
+    static SetName = (id, name) => ({
+        class: CLASS,
+        type: 'SET_NAME',
+        data: {
+            id,
+            name
+        }
+    })
     
     static SetObjects = (data) => ({
         class: CLASS,

@@ -14,7 +14,7 @@ export default function AutoSaver() {
     useEffect(() => {
 
         const id = setInterval(() => {
-            if(document.hasFocus()) {
+            if (document.hasFocus()) {
                 //Proyect.saveSceneAsLocalStorage({ scene, grid, ambientLights, pointLights, object3ds })
             }
         }, 15000)

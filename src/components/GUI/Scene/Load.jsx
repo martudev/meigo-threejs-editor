@@ -1,11 +1,10 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Folder from "src/tweakpane-react/Folder";
 import { Button } from "src/tweakpane-react/Input";
 import { useRef } from 'react';
 import { useEventListener } from 'src/hooks/Listeners';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three'
-import { AddObject3D } from 'src/redux/actions';
 import JSZip from 'jszip'
 import Project from 'src/models/Project';
 import { Object3DActions } from 'src/redux/Object3D/actions';
@@ -19,6 +18,7 @@ const createBlobFromZip = async (zip, key) => {
 export default function Load() {
 
     const dispatch = useDispatch()
+    const scene = useSelector(store => store.scene.value)
 
     const inputZipRef = useRef()
     const inputObjRef = useRef()
@@ -51,7 +51,8 @@ export default function Load() {
             });
             const loader = new GLTFLoader(manager)
             loader.load(gltfFileName, (obj) => {
-                console.log(obj.scene)
+                obj.scene.type = 'Object3D'
+                scene.add(obj.scene)
                 dispatch(Object3DActions.Add({ obj: obj.scene }))
                 objectURLs.forEach( (url) => URL.revokeObjectURL(url) );
                 inputZipRef.current.value = '' // IMPORTANT cleaning the input type file

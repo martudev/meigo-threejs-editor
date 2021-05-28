@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLimitFps, useLimitFps } from "src/hooks/LimitFps";
 import Folder from "src/tweakpane-react/Folder";
@@ -8,26 +8,30 @@ import { Separator } from "src/tweakpane-react/Separator";
 import { Object3DActions } from "src/redux/Object3D/actions";
 
 
-export default function Object3D({ title = 'Object3D', number = 0, obj = undefined }) {
+export default function Object3D({ title = 'Object3D', id = 0, uuid = undefined }) {
 
     const dispatch = useDispatch()
-
     const scene = useSelector(store => store.scene.value)
-    const [isVisible, setVisibility] = useState(false)
+
+    const [isVisible, setVisibility] = useState(true)
     const [fullTitle, setFullTitle] = useState(title)
     const [name, setName] = useState(fullTitle)
 
-    useEffect(() => {
-        setFullTitle(title)
-    }, [title])
+    const getObject3D = () => {
+        return scene.children.find(child => child.uuid == uuid)
+    }
+
+    const [obj] = useState(getObject3D())
 
     const handleRemove = () => {
         setVisibility(false)
-        dispatch(Object3DActions.Remove(number))
+        scene.remove(obj)
+        dispatch(Object3DActions.Remove(id))
     }
 
     const handleChangeName = () => {
         setFullTitle(name)
+        dispatch(Object3DActions.SetName(id, name))
     }
 
     const fpsObject_position = setLimitFps(60)
@@ -56,15 +60,6 @@ export default function Object3D({ title = 'Object3D', number = 0, obj = undefin
             obj.scale.z = ev.value.z
         }, fpsObject_scale)
     }
-
-    useEffect(() => {
-        scene.add(obj)
-        setVisibility(true)
-
-        return () => {
-            scene.remove(obj)
-        }
-    }, [])
 
 
     return(
