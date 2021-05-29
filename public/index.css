@@ -16,11 +16,18 @@
 }
 
 body {
-  background-color: #4d4d4d;
+  background-color: #252423;
   font-family: "Telex";
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0;
   overflow: hidden;
+}
+
+::-moz-selection {
+  background: #c9c9c92c;
+}
+::selection {
+  background: #c9c9c92c;
 }

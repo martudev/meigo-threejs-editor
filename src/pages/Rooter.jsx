@@ -3,7 +3,6 @@ import {
     Switch,
     Route
 } from "react-router-dom";
-import Editor from "./Editor";
 import Landing from "./Landing";
 import Welcome from "./Welcome";
 
@@ -12,13 +11,10 @@ export default function Rooter() {
         <Router>
             <Switch>
             <Route exact path="/">
-                <Landing />
-            </Route>
-            <Route exact path="/welcome">
                 <Welcome />
             </Route>
-            <Route exact path="/editor">
-                <Editor />
+            <Route exact path="/landing">
+                <Landing />
             </Route>
             </Switch>
         </Router>
