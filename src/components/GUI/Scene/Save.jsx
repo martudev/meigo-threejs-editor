@@ -7,7 +7,6 @@ import Folder from 'src/tweakpane-react/Folder'
 import Worker from "src/workers/saveScene.worker.js";
 import { useWebWorker } from 'src/hooks/useWebWorker';
 import { saveAs } from 'file-saver';
-import { Utf16Buffer } from 'src/models/Buffer';
 
 
 const getCurrentDateTimeFormatted = () => {

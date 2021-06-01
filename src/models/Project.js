@@ -1,4 +1,3 @@
-import { saveAs } from 'file-saver';
 import LZString from 'lz-string'
 import { AmbientLightActions } from 'src/redux/AmbientLight/actions';
 import { setGrid } from 'src/redux/Grid/actions';
@@ -6,6 +5,7 @@ import { Object3DActions } from 'src/redux/Object3D/actions';
 import { PointLightActions } from 'src/redux/PointLight/actions';
 import { setScene } from 'src/redux/Scene/actions';
 import * as THREE from 'three'
+import Worker from 'src/workers/decompress.worker'
 
 
 
@@ -35,15 +35,23 @@ export default class Project {
 
         const output = this.compressScene(sceneJson, { grid, ambientLights, pointLights, object3ds })
         var file = new File([output], `${fileName}.obj`, {type: "text/plain;charset=utf-16"});
-        //saveAs(file)
         return file
     }
 
-    static decompressScene(obj) {
-        if(obj == null) return
+    static async decompressScene(obj) {
+        return new Promise((resolve, reject) => {
+            if(obj == null) {
+                reject()
+                return
+            }
 
-        const stringJson = LZString.decompressFromUTF16(obj)
-        return JSON.parse(stringJson)
+            const worker = new Worker()
+            worker.postMessage(obj)
+
+            worker.addEventListener('message', (event) => {
+                resolve(JSON.parse(event.data))
+            })
+        })
     }
 
     static saveSceneAsLocalStorage({ scene, grid, ambientLights, pointLights, object3ds  }) {
@@ -54,9 +62,9 @@ export default class Project {
         localStorage.setItem('threejsEditor.scene', output)
     }
 
-    static getSceneFromLocalStorage() {
+    static async getSceneFromLocalStorage() {
         const sceneString = localStorage.getItem('threejsEditor.scene')
-        return this.decompressScene(sceneString)
+        return await this.decompressScene(sceneString)
     }
 
     static newScene() {
@@ -64,24 +72,25 @@ export default class Project {
         location.reload()
     }
 
-    static LoadSceneFromString(callback, string, dispatch) {
-        const json = this.decompressScene(string)
+    static async LoadSceneFromString(callback, string, dispatch) {
+        const json = await this.decompressScene(string)
         this.LoadScene(() => {
             callback()
         }, json, dispatch)
     }
 
     static LoadScene(callback, json, dispatch) {
-        const { scene } = json;
-        new THREE.ObjectLoader().parse(scene, (obj) => {
+        const { scene } = json
+        const objLoader = new THREE.ObjectLoader()
+        objLoader.parse(scene, (obj) => {
             dispatch(setScene(obj))
             this.setSceneExternalObjects(json, dispatch)
             callback()
         })
     }
 
-    static CompareAndLoadSceneFromStorage(scene, dispatch) {
-        const json = this.getSceneFromLocalStorage()
+    static async CompareAndLoadSceneFromStorage(scene, dispatch) {
+        const json = await this.getSceneFromLocalStorage()
         
         if (json != null) {
             
@@ -106,6 +115,18 @@ export default class Project {
         dispatch(AmbientLightActions.SetLights(ambientLights))
         dispatch(PointLightActions.SetLights(pointLights))
         dispatch(Object3DActions.SetObjects(object3ds))
+    }
+
+
+    static ReadFileAndLoadScene(callback, file, dispatch) {
+        const onLoadScene = (event) => {
+            const string = event.target.result
+            this.LoadSceneFromString(callback, string, dispatch)
+        }
+
+        const reader = new FileReader()
+        reader.onload = onLoadScene
+        reader.readAsText(file, 'text/plain;charset=utf-16')
     }
 
 }

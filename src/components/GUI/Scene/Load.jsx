@@ -66,9 +66,9 @@ export default function Load() {
 
     const onLoadScene = (event) => {
         const string = event.target.result
-        Project.LoadSceneFromString(() => {
+        /*Project.LoadSceneFromString(() => {
             inputObjRef.current.value = '' // IMPORTANT cleaning the input type file
-        }, string, dispatch)
+        }, string, dispatch)*/
     }
 
     const onInputObjChange = (ev) => {

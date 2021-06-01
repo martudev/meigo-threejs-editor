@@ -3,6 +3,12 @@ import styled from 'styled-components'
 import anime from 'animejs/lib/anime'
 import { useEffect, useRef, useState } from 'react'
 import Editor from './Editor'
+import Btn from 'src/styles/Buttons/Button'
+import Loader from 'src/styles/Buttons/Loader'
+import { useEventListener } from 'src/hooks/Listeners';
+import Project from 'src/models/Project'
+import { useDispatch } from 'react-redux'
+
 
 const Title = styled.h1`
     font-family: GilRoy-Bold;
@@ -28,10 +34,10 @@ const Container = styled.section`
 `
 
 const Icon = styled.div`
-    width: 100px;
-    height: 100px;
-    background-color: #FF8F42;
+    width: 0rem;
+    height: 0rem;
     position: relative;
+    background-color: #e67447;
 `
 
 const Menu = styled.div`
@@ -44,31 +50,6 @@ const Menu = styled.div`
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
-`
-
-const Btn = styled.div`
-    position: relative;
-    border-radius: 5px;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    text-align: center;
-    margin-right: 2rem;
-    color: #fff;
-    --box-shadow-color: #096a94;
-    box-shadow: 0 4px 0 0 var(--box-shadow-color);
-    cursor: pointer;
-    top: 0;
-    background-color:#1995ca;
-    transition: background-color 150ms ease-in-out, box-shadow 100ms ease-in-out, top 100ms ease-in-out;
-    &:hover {
-        background-color: #31a8db;
-        --box-shadow-color: 0 4px 0 0 #0e7aa8;
-    }
-    &:active {
-        top: 4px;
-        box-shadow: none;
-    }
-    user-select: none;
 `
 
 const NewSceneButton = styled(Btn)`
@@ -145,33 +126,42 @@ const VersionShow = styled.div`
 `
 
 
-
 export default function Welcome() {
+
+    const dispatch = useDispatch()
 
     const titleRef = useRef()
     const subTitleRef = useRef()
     const iconRef = useRef()
     const menuRef = useRef()
+    const inputLoadSceneRef = useRef()
+
+    // Buttons
+    const loadSceneBtnRef = useRef()
+
+    const Text_LoadScene = 'Load Scene'
 
     const [isVisible, setVisibility] = useState(false)
+    const [loadSceneText, setLoadSceneText] = useState(Text_LoadScene)
+    const [isLoadingScene, setIsLoadingScene] = useState(false)
 
     useEffect(() => {
         setTimeout(() => {
             anime({
                 targets: iconRef.current,
-                top: -200,
-                borderRadius: ['0%', '50%'],
-                opacity: .5,
-                scale: 0.5
+                top: -170,
+                width: '10rem',
+                height: '0.3rem',
+                scale: 0.5,
             });
             anime({
                 targets: titleRef.current,
-                translateY: 200,
+                translateY: 240,
                 scale: 0.5
             });
             anime({
                 targets: subTitleRef.current,
-                translateY: 150,
+                translateY: 180,
                 scale: 0.5,
                 complete: function() {
                     anime({
@@ -224,16 +214,45 @@ export default function Welcome() {
         return array
     }
 
+    const onLoadSceneDone = () => {
+        const button = loadSceneBtnRef.current
+        button.value = '' // IMPORTANT cleaning the input type file
+        button.classList.remove('loading')
+        setIsLoadingScene(false)
+        setLoadSceneText(Text_LoadScene)
+        setVisibility(true)
+    }
+
+    const onInputObjChange = (ev) => {
+        const fileList = ev.target.files;
+        Project.ReadFileAndLoadScene(onLoadSceneDone, fileList[0], dispatch)
+
+        const button = loadSceneBtnRef.current
+        button.classList.add('loading')
+        setIsLoadingScene(true)
+        setLoadSceneText('Loading...')
+    }
+
+    useEventListener('change', onInputObjChange, inputLoadSceneRef)
+
+    const handleClickLoadScene = (ev) => {
+        inputLoadSceneRef.current.click()
+    }
+
     return(
         <>
             {!isVisible &&
                 <>
+                    <input type="file" accept="*" style={{ display: 'none' }} ref={inputLoadSceneRef}></input>
                     <Container>
                         <Icon ref={iconRef}></Icon>
                         <Menu ref={menuRef}>
                             <WelcomeMessage>Welcome to Medusa Editor 👋</WelcomeMessage>
                             <NewSceneButton onClick={handleNewScene}>New Scene</NewSceneButton>
-                            <LoadSceneButton>Load Scene</LoadSceneButton>
+                            <LoadSceneButton onClick={handleClickLoadScene} ref={loadSceneBtnRef}>
+                                {loadSceneText}
+                                {isLoadingScene && <Loader></Loader>}
+                            </LoadSceneButton>
                             <DocsButton>Docs</DocsButton>
                             <APIButton>API</APIButton>
                         </Menu>
