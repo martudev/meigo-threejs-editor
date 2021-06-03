@@ -28,7 +28,7 @@ export default function Editor() {
         
         if(globalScene == null) {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color("#4d4d4d");
+            scene.background = new THREE.Color("#252423");
         } else if(globalScene != null) {
             scene = globalScene
         }

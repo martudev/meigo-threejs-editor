@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
 import Folder from "src/tweakpane-react/Folder";
 import { Button } from "src/tweakpane-react/Input";
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useEventListener } from 'src/hooks/Listeners';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three'
 import JSZip from 'jszip'
 import Project from 'src/models/Project';
 import { Object3DActions } from 'src/redux/Object3D/actions';
+import LoadScene from 'src/components/LoadScene';
 
 
 const createBlobFromZip = async (zip, key) => {
@@ -20,10 +21,16 @@ export default function Load() {
     const dispatch = useDispatch()
     const scene = useSelector(store => store.scene.value)
 
+    const LoadScene_Text = 'Load scene'
+    const Load3dModel_Text = 'Load 3d Model'
+    const [loadSceneText, setLoadSceneText] = useState(LoadScene_Text)
+    const [load3dModelText, setLoad3dModelText] = useState(Load3dModel_Text)
+
     const inputZipRef = useRef()
     const inputObjRef = useRef()
 
     const onLoadModel = (ev) => {
+        setLoad3dModelText('Loading...')
 
         const jszip = new JSZip()
         jszip.loadAsync(ev.target.files[0]).then(async (zip) => {
@@ -56,6 +63,7 @@ export default function Load() {
                 dispatch(Object3DActions.Add({ obj: obj.scene }))
                 objectURLs.forEach( (url) => URL.revokeObjectURL(url) );
                 inputZipRef.current.value = '' // IMPORTANT cleaning the input type file
+                setLoad3dModelText(Load3dModel_Text)
             })
 
         })
@@ -64,28 +72,16 @@ export default function Load() {
 
     useEventListener('change', onLoadModel, inputZipRef)
 
-    const onLoadScene = (event) => {
-        const string = event.target.result
-        /*Project.LoadSceneFromString(() => {
-            inputObjRef.current.value = '' // IMPORTANT cleaning the input type file
-        }, string, dispatch)*/
+    const onLoadSceneDone = () => {
+        setLoadSceneText(LoadScene_Text)
     }
 
-    const onInputObjChange = (ev) => {
-        const fileList = ev.target.files;
-        var reader = new FileReader()
-        reader.onload = onLoadScene
-        reader.readAsText(fileList[0], 'text/plain;charset=utf-16')
+    const onLoadingScene = (ev) => {
+        setLoadSceneText('Loading...')
     }
-
-    useEventListener('change', onInputObjChange, inputObjRef)
 
     const handleLoad3DModel = (ev) => {
         inputZipRef.current.click()
-    }
-
-    const handleLoadScene = (ev) => {
-        inputObjRef.current.click()
     }
 
     return(
@@ -93,8 +89,10 @@ export default function Load() {
             <input type="file" accept=".zip" style={{ display: 'none' }} ref={inputZipRef}></input>
             <input type="file" accept=".obj" style={{ display: 'none' }} ref={inputObjRef}></input>
             <Folder title='Load'>
-                <Button title='Load scene' onClick={handleLoadScene} />
-                <Button title='Load 3d Model' onClick={handleLoad3DModel} />
+                <LoadScene onLoading={onLoadingScene} onDone={onLoadSceneDone}>
+                    <Button title={loadSceneText} />
+                </LoadScene>
+                <Button title={load3dModelText} onClick={handleLoad3DModel} />
             </Folder>
         </>
     )

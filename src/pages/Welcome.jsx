@@ -8,6 +8,8 @@ import Loader from 'src/styles/Buttons/Loader'
 import { useEventListener } from 'src/hooks/Listeners';
 import Project from 'src/models/Project'
 import { useDispatch } from 'react-redux'
+import pjson from '../../package.json'
+import LoadScene from 'src/components/LoadScene'
 
 
 const Title = styled.h1`
@@ -134,7 +136,6 @@ export default function Welcome() {
     const subTitleRef = useRef()
     const iconRef = useRef()
     const menuRef = useRef()
-    const inputLoadSceneRef = useRef()
 
     // Buttons
     const loadSceneBtnRef = useRef()
@@ -206,6 +207,21 @@ export default function Welcome() {
         });
     }
 
+    const onLoadingScene = () => {
+        const button = loadSceneBtnRef.current
+        button.classList.add('loading')
+        setIsLoadingScene(true)
+        setLoadSceneText('Loading...')
+    }
+
+    const onLoadDone = () => {
+        const button = loadSceneBtnRef.current
+        button.classList.remove('loading')
+        setIsLoadingScene(false)
+        setLoadSceneText(Text_LoadScene)
+        setVisibility(true)
+    }
+
     const items = () => {
         const array = []
         for (var i=0; i < 162 ;i++) {
@@ -214,45 +230,21 @@ export default function Welcome() {
         return array
     }
 
-    const onLoadSceneDone = () => {
-        const button = loadSceneBtnRef.current
-        button.value = '' // IMPORTANT cleaning the input type file
-        button.classList.remove('loading')
-        setIsLoadingScene(false)
-        setLoadSceneText(Text_LoadScene)
-        setVisibility(true)
-    }
-
-    const onInputObjChange = (ev) => {
-        const fileList = ev.target.files;
-        Project.ReadFileAndLoadScene(onLoadSceneDone, fileList[0], dispatch)
-
-        const button = loadSceneBtnRef.current
-        button.classList.add('loading')
-        setIsLoadingScene(true)
-        setLoadSceneText('Loading...')
-    }
-
-    useEventListener('change', onInputObjChange, inputLoadSceneRef)
-
-    const handleClickLoadScene = (ev) => {
-        inputLoadSceneRef.current.click()
-    }
-
     return(
         <>
             {!isVisible &&
                 <>
-                    <input type="file" accept="*" style={{ display: 'none' }} ref={inputLoadSceneRef}></input>
                     <Container>
                         <Icon ref={iconRef}></Icon>
                         <Menu ref={menuRef}>
                             <WelcomeMessage>Welcome to Medusa Editor 👋</WelcomeMessage>
                             <NewSceneButton onClick={handleNewScene}>New Scene</NewSceneButton>
-                            <LoadSceneButton onClick={handleClickLoadScene} ref={loadSceneBtnRef}>
-                                {loadSceneText}
-                                {isLoadingScene && <Loader></Loader>}
-                            </LoadSceneButton>
+                            <LoadScene onLoading={onLoadingScene} onDone={onLoadDone}>
+                                <LoadSceneButton ref={loadSceneBtnRef}>
+                                    {loadSceneText}
+                                    {isLoadingScene && <Loader></Loader>}
+                                </LoadSceneButton>
+                            </LoadScene>
                             <DocsButton>Docs</DocsButton>
                             <APIButton>API</APIButton>
                         </Menu>
@@ -263,7 +255,7 @@ export default function Welcome() {
                         <SubTitle ref={subTitleRef}>EDITOR</SubTitle>
                     </Container>
                     <VersionShow>
-                        v1.0.0
+                        v{pjson.version}
                     </VersionShow>
                 </>
             }
