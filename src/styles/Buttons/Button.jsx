@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components'
 
 
-const Btn = styled.div`
+const Btn = styled(Link)`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,6 +11,7 @@ const Btn = styled.div`
     padding: 1rem 2rem;
     font-size: 1rem;
     text-align: center;
+    text-decoration: none;
     margin-right: 2rem;
     color: #fff;
     --box-shadow-color: #096a94;
@@ -55,10 +57,15 @@ const Btn = styled.div`
 
 function Button(props) {
 
-    const {forwardedRef, ...rest} = props;
+    const {forwardedRef, to, ...rest} = props;
+
+    let toUrl = ''
+    if (to != null) {
+        toUrl = to
+    }
 
     return(
-        <Btn {...rest} ref={forwardedRef}>
+        <Btn {...rest} to={toUrl} ref={forwardedRef}>
             {rest.children}
         </Btn>
     )

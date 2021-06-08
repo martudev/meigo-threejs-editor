@@ -10,6 +10,7 @@ import Project from 'src/models/Project'
 import { useDispatch } from 'react-redux'
 import pjson from '../../package.json'
 import LoadScene from 'src/components/LoadScene'
+import GlobalStyles from 'src/styles/Welcome/index'
 
 
 const Title = styled.h1`
@@ -102,22 +103,6 @@ const WelcomeMessage = styled.div`
     color: #fff;
 `
 
-const LoadingContainer = styled.div`
-    width: 30vw;
-    position: absolute;
-    top: 28vh;
-    opacity: 0;
-    display: none;
-    flex-wrap: wrap;
-`
-
-const ItemLoader = styled.div`
-    width: 18px;
-    height: 18px;
-    background-color: #ad6587;
-    margin: 2px;
-`
-
 const VersionShow = styled.div`
     position: absolute;
     top: 5px;
@@ -184,25 +169,7 @@ export default function Welcome() {
             opacity: [1, 0],
             easing: 'easeInOutQuad',
             complete: () => {
-                anime({
-                    targets: '.loading-container',
-                    opacity: [0, 1],
-                    easing: 'easeInOutQuad',
-                    begin: () => {
-                        document.querySelector('.loading-container').style.display = 'flex'
-                    }
-                });
-                anime({
-                    targets: '.loading-container div',
-                    scale: [
-                      {value: .1, easing: 'easeOutSine', duration: 500},
-                      {value: 1, easing: 'easeInOutQuad', duration: 1200}
-                    ],
-                    delay: anime.stagger(200, {grid: [14, 5], from: 'center'}),
-                    complete: () => {
-                        setVisibility(true)
-                    }
-                });
+                setVisibility(true)
             }
         });
     }
@@ -222,16 +189,9 @@ export default function Welcome() {
         setVisibility(true)
     }
 
-    const items = () => {
-        const array = []
-        for (var i=0; i < 162 ;i++) {
-            array.push(<ItemLoader key={i}></ItemLoader>)
-        }
-        return array
-    }
-
     return(
         <>
+            <GlobalStyles />
             {!isVisible &&
                 <>
                     <Container>
@@ -245,12 +205,9 @@ export default function Welcome() {
                                     {isLoadingScene && <Loader></Loader>}
                                 </LoadSceneButton>
                             </LoadScene>
-                            <DocsButton>Docs</DocsButton>
+                            <DocsButton to='/docs'>Docs</DocsButton>
                             <APIButton>API</APIButton>
                         </Menu>
-                        <LoadingContainer className='loading-container'>
-                            {items()}
-                        </LoadingContainer>
                         <Title ref={titleRef}>Medusa</Title>
                         <SubTitle ref={subTitleRef}>EDITOR</SubTitle>
                     </Container>
