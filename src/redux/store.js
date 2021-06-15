@@ -7,6 +7,7 @@ import gridReducer from './Grid/reducer'
 import ambientLightReducer from './AmbientLight/reducer'
 import pointLightReducer from './PointLight/reducer'
 import object3DReducer from './Object3D/reducer'
+import themeReducer from './Theme/reducer'
 
 const rootReducer = combineReducers({
     scene: sceneReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     AmbientLight: ambientLightReducer,
     PointLight: pointLightReducer,
     Object3D: object3DReducer,
+    theme: themeReducer,
 })
 
 export default createStore(rootReducer)

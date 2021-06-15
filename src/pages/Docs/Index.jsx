@@ -1,8 +1,9 @@
 
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import GlobalStyles from '../../styles/Docs/index'
+import GlobalStyles from '../../styles/index'
 import LogoSvg from 'src/svgs/Logo'
+import ToggableTheme from 'src/theme/ToggableTheme'
 
 
 const GlobalContainer = styled.div`
@@ -16,7 +17,8 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    background-color: #e6e6e622;
+    background-color: ${props => props.theme.theme == 'dark'? '#313131' : '#e6e6e622'};
+    transition: ease-in-out 0.2s background-color;
 `
 
 const ContentContainer = styled.div`
@@ -32,7 +34,8 @@ const LogoContainer = styled.div`
     width: ${logoDimensions};
     height: ${logoDimensions};
     position: relative;
-    fill: #e3b4f8;
+    fill: ${props => props.theme.theme == 'dark'? '#707070' : '#9789f3'};
+    transition: ease-in-out 0.2s fill;
 `
 
 const Version = styled.div`
@@ -40,7 +43,8 @@ const Version = styled.div`
     position: relative;
     align-self: center;
     padding-left: 15px;
-    color: #d498f0;
+    color: ${props => props.theme.theme == 'dark' ? '#707070' : '#9789f3'};
+    transition: ease-in-out 0.2s color;
 `
 
 const LeftNavigator = styled.div`
@@ -58,7 +62,8 @@ const LeftNavigator = styled.div`
     }
     
     &::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: ${props => props.theme.theme == 'dark'? '#424242' : '#f1f1f1'};
+        transition: ease-in-out 0.2s background;
         border-radius: 10px;
     }
     
@@ -89,18 +94,21 @@ const SubLi = styled.li`
 const Button = styled(Link)`
     text-decoration: none;
     display: block;
-    color: #55565e;
+    color: ${props => props.theme.theme == 'dark' ? '#f1f2f3' : '#55565e'};
+    transition: ease-in-out 0.2s color;
     font-weight: 600;
     font-size: 1.2rem;
     border-radius: 6px;
     padding: 0.6rem 1.5rem;
 
     &.active {
-        background-color: #f1f2f3;
+        background-color: ${props => props.theme.theme == 'dark' ? '#414141' : '#f1f2f3'};
+        transition: ease-in-out 0.2s background-color;
     }
 
     &:hover {
-        background-color: #f1f2f3;
+        background-color: ${props => props.theme.theme == 'dark' ? '#414141' : '#f1f2f3'};
+        transition: ease-in-out 0.2s background-color;
     }
 `
 
@@ -114,6 +122,10 @@ const SubButton = styled(Button)`
     &:hover {
         color: #55565e;
     }
+`
+
+const ToggableThemeContainer = styled.div`
+    margin-top: 1.5rem;
 `
 
 
@@ -156,6 +168,9 @@ export default function Index({ children }) {
                     </LeftNavigator>
                 </Container>
                 <ContentContainer>
+                    <ToggableThemeContainer>
+                        <ToggableTheme></ToggableTheme>
+                    </ToggableThemeContainer>
                     {children}
                 </ContentContainer>
             </GlobalContainer>

@@ -3,6 +3,7 @@ import {
     Switch,
     Route
 } from "react-router-dom";
+import ThemeContext from "src/theme/ThemeContext";
 import API from "./API";
 import GettingStarted from "./Docs/GettingStarted";
 import Docs from "./Docs/Index";
@@ -13,16 +14,18 @@ export default function Rooter() {
     return (
         <Router>
             <Switch>
-            <Route exact path="/">
-                <Welcome />
-            </Route>
-            <Route path="/docs" component={DocsRoute} />
-            <Route exact path="/api">
-                <API />
-            </Route>
-            <Route exact path="/landing">
-                <Landing />
-            </Route>
+                <ThemeContext>
+                    <Route exact path="/">
+                        <Welcome />
+                    </Route>
+                    <Route path="/docs" component={DocsRoute} />
+                    <Route exact path="/api">
+                        <API />
+                    </Route>
+                    <Route exact path="/landing">
+                        <Landing />
+                    </Route>
+                </ThemeContext>
             </Switch>
         </Router>
     );
