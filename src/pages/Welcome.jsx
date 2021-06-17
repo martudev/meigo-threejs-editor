@@ -18,6 +18,12 @@ const LogoContainer = styled.div`
     position: relative;
 `
 
+const ToggableThemeContainer = styled.div`
+    position: absolute;
+    top: 20px;
+    left: 20px;
+`
+
 const Container = styled.section`
     width: 100vw;
     height: 100vh;
@@ -177,7 +183,9 @@ export default function Welcome() {
             <GlobalStyles />
             {!isVisible &&
                 <>
-                    <ToggableTheme></ToggableTheme>
+                    <ToggableThemeContainer>
+                        <ToggableTheme></ToggableTheme>
+                    </ToggableThemeContainer>
                     <Container>
                         <Icon ref={iconRef}></Icon>
                         <Menu ref={menuRef}>
